@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CourseProject.Modules;
 
 namespace CourseProject
 {
@@ -20,9 +22,74 @@ namespace CourseProject
     /// </summary>
     public partial class MainWindow : Window
     {
+        private string UserFIO = null;
+        /// <summary>
+        /// Упрощенное взаимодействие с БД
+        /// </summary>
+        private UsingAccess UsAc;
+
+        /// <summary>
+        /// Путь до БД
+        /// </summary>
+        private string BDWay = Environment.CurrentDirectory + "\\db.mdb";
+
         public MainWindow()
         {
             InitializeComponent();
+            CreateConnection();
+            AutorizationUser();
+        }
+
+        /// <summary>
+        /// Создание подключения
+        /// </summary>
+        /// <returns>Успех подключения</returns>
+        private void CreateConnection()
+        {
+            //Определение пути до БД
+            try
+            {
+                //Чтение пути до БД из файла
+                string way = File.ReadAllLines("db.txt", Encoding.GetEncoding(1251))[0];
+                if (way != "")
+                {
+                    BDWay = way;
+                }
+            }
+            catch { }
+
+            //Подключение к БД
+            try
+            {
+                UsAc = new UsingAccess(BDWay, null, null, null);
+                UsAc.AutoOpen = true;
+            }
+            catch
+            {
+                MessageBox.Show("Не удалось подключится к базе данных, пожалуйста, обратитесь к администратору");
+                this.Close();
+                return;
+            }      
+        }
+
+        /// <summary>
+        /// Подключение к БД и авторизация пользователя
+        /// </summary>
+        private void AutorizationUser()
+        {
+            //Авторизация пользователя
+            var window = new Windows.AuthorizationWindow(UsAc);
+            if (window.ShowDialog() == true)
+            {
+                UserFIO = window.FIO;
+                this.Show();
+            }
+            else
+            {
+                //Вход был отменен
+                this.Close();
+                return;
+            }
         }
     }
 }
