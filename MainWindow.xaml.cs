@@ -22,7 +22,11 @@ namespace CourseProject
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// Упрощенное взаимодействие с таблицами
+        /// </summary>
         private Tables Table;
+
         /// <summary>
         /// ФИО авторизованного пользователя
         /// </summary>

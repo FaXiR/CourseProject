@@ -73,15 +73,15 @@ namespace CourseProject.Modules
 
             if (Select != null)
             {
-                SQLRequest += $"Select {Select} ";
+                SQLRequest += $"SELECT {Select} ";
             }
             if (From != null)
             {
-                SQLRequest += $"from {From} ";
+                SQLRequest += $"FROM {From} ";
             }
             if (Where != null)
             {
-                SQLRequest += $"where {Where} ";
+                SQLRequest += $"WHERE {Where} ";
             }
             if (orderBy != null)
             {
@@ -91,6 +91,35 @@ namespace CourseProject.Modules
             DVTable = UsAc.Execute(SQLRequest);
         }
 
+        /// <summary>
+        /// Удаление записи в таблице
+        /// </summary>
+        /// <param name="Where">Условие отбора</param>
+        public void DeleteFrom(string Where)
+        {
+            UsAc.ExecuteNonQuery($"DELETE FROM {From} WHERE {Where}");
+        }
+
+        /// <summary>
+        /// Добавление записи таблицы
+        /// </summary>
+        /// <param name="Column">Название поля</param>
+        /// <param name="Values">Значение для поля</param>
+        public void InsertInto(string Column, string Values)
+        {
+            UsAc.ExecuteNonQuery($"INSERT INTO {From} ({Column}) VALUES ({Values})");
+        }
+
+        /// <summary>
+        /// Измение записи
+        /// </summary>
+        /// <param name="set">Нужное поле и значение</param>
+        /// <param name="where">Условие отбора</param>
+        public void Update(string set, string where)
+        {
+            UsAc.ExecuteNonQuery($"UPDATE {From} SET {set} WHERE {where}");
+        }
+            
         /// <summary>
         /// Упрощенное взаимодейстеие с таблицой
         /// </summary>
