@@ -21,19 +21,19 @@ namespace CourseProject.Windows
             get { return F_Password.Password.ToString(); }
             set { F_Password.Password = value; }
         }
-        private UsingAccess UsAc;
+        private UsingDataView UserList;
         #endregion
 
         /// <summary>
         /// Окно авторизации
         /// </summary>
         /// <param name="usingAccess">Соеденение с Access для проверки Логина/Пароля</param>
-        public AuthorizationWindow(UsingAccess usingAccess)
+        public AuthorizationWindow(UsingDataView UserList)
         {
             InitializeComponent();
 
-            UsAc = usingAccess;
             F_Login.Focus();
+            this.UserList = UserList;
         }
 
         /// <summary>
@@ -79,14 +79,16 @@ namespace CourseProject.Windows
         private bool CheckLogPas()
         {
             //Поиск записи в БД
-            var FoundRole = UsAc.Execute($@"Select ФИО From Пользователи where Логин = ""{F_Login.Text}"" and Пароль = ""{F_Password.Password}""");
-            if (FoundRole.Count == 0)
+            UserList.Where = $@"Логин = ""{F_Login.Text}"" and Пароль = ""{F_Password.Password}""";
+            UserList.UpdateTable();
+           
+            if (UserList.DVTable.Count == 0)
             {
                 return false;
             }
             else
             {
-                FIO = FoundRole.Table.Rows[0]["ФИО"].ToString();
+                FIO = UserList.DVTable.Table.Rows[0]["ФИО"].ToString();
                 return true;                
             }
         }

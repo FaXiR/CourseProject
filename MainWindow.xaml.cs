@@ -22,6 +22,7 @@ namespace CourseProject
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Tables Table;
         /// <summary>
         /// ФИО авторизованного пользователя
         /// </summary>
@@ -76,7 +77,10 @@ namespace CourseProject
                 MessageBox.Show("Не удалось подключится к базе данных, пожалуйста, обратитесь к администратору");
                 this.Close();
                 return;
-            }      
+            }
+
+            //Присоединение таблиц
+            Table = new Tables(UsAc);
         }
 
         /// <summary>
@@ -85,7 +89,7 @@ namespace CourseProject
         private void AutorizationUser()
         {
             //Авторизация пользователя
-            var window = new Windows.AuthorizationWindow(UsAc);
+            var window = new Windows.AuthorizationWindow(Table.Users);
             if (window.ShowDialog() == true)
             {
                 UserFIO = window.FIO;
@@ -107,7 +111,7 @@ namespace CourseProject
             //Если подключения к БД нет или пользователь не авторизован - закрыть приложение без раздумий
             if (UsAc == null || UserFIO == null)
             {
-                return;
+                return;                
             }
 
             //Опрос пользователя

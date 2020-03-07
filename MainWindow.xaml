@@ -5,8 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CourseProject"
         mc:Ignorable="d"
-        Title="Архив Росреестра" Height="450" Width="800" Closing="Window_Closing">
+        Title="Архив Росреестра" Height="400" Width="400" Closing="Window_Closing">
     <Grid>
-        
+        <!--Основное рабочее место-->
+        <Grid>
+            <!--Список дел-->
+            <Grid x:Name="F_GridDealList">
+                
+                
+                
+            </Grid>
+        </Grid>    
     </Grid>
 </Window>
