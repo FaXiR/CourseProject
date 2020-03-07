@@ -22,7 +22,11 @@ namespace CourseProject
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// ФИО авторизованного пользователя
+        /// </summary>
         private string UserFIO = null;
+
         /// <summary>
         /// Упрощенное взаимодействие с БД
         /// </summary>
@@ -33,6 +37,9 @@ namespace CourseProject
         /// </summary>
         private string BDWay = Environment.CurrentDirectory + "\\db.mdb";
 
+        /// <summary>
+        /// Логика взаимодействия для MainWindow.xaml
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -89,6 +96,31 @@ namespace CourseProject
                 //Вход был отменен
                 this.Close();
                 return;
+            }
+        }
+
+        /// <summary>
+        /// Событие при закрытии приложения
+        /// </summary>
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            //Если подключения к БД нет или пользователь не авторизован - закрыть приложение без раздумий
+            if (UsAc == null || UserFIO == null)
+            {
+                return;
+            }
+
+            //Опрос пользователя
+            if (MessageBox.Show("Выйти из программы?", "Выход", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.No)
+            {
+                try
+                {
+                    UsAc.ConnectClose();
+                }
+                finally
+                {
+                    e.Cancel = true;
+                }
             }
         }
     }
