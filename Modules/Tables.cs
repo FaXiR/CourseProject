@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CourseProject.Modules
+﻿namespace CourseProject.Modules
 {
     /// <summary>
     /// Хранит все таблицы для проекта CourseProject
@@ -23,7 +17,7 @@ namespace CourseProject.Modules
         {
             this.UsAc = UsAc;
 
-            Deal = new UsingDataView(UsAc, "*", "Дело", null, null);
+            Deal = new UsingDataView(UsAc, "Номер_дела AS [Номер дела], Дата_введения_на_хранение AS [Введено на хранение], Причина_открытия AS [Причина открытия], Заверитель", "Дело", null, null);
             Document = new UsingDataView(UsAc, "*", "Документ", null, null);
             DocumentContent = new UsingDataView(UsAc, "*", "Содержимое_документа", null, null);
             Users = new UsingDataView(UsAc, "*", "Пользователи", null, null);

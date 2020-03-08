@@ -57,6 +57,9 @@
     </ApplicationDefinition>
     <Compile Include="Modules\Tables.cs" />
     <Compile Include="Modules\UsingDataView.cs" />
+    <Compile Include="Windows\AddDeal.xaml.cs">
+      <DependentUpon>AddDeal.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\AuthorizationWindow.xaml.cs">
       <DependentUpon>AuthorizationWindow.xaml</DependentUpon>
     </Compile>
@@ -72,6 +75,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Windows\AddDeal.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\AuthorizationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -104,9 +111,24 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Add.png" />
+    <Resource Include="Resources\Delete.png" />
+    <Resource Include="Resources\Edit.png" />
+    <Resource Include="Resources\Save.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Authorizaton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Update.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Back.png" />
+    <Resource Include="Resources\Open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Found.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
