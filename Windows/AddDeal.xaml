@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CourseProject.Windows"
         mc:Ignorable="d"
-        Title="Добавление дела" Height="124" Width="200" ResizeMode="NoResize">
+        Title="Добавление дела" Height="124" Width="220" ResizeMode="NoResize">
     <Grid>
         <StackPanel>
             <TextBlock Text="Введите номер дела" Margin="4" x:Name="BusinessTextBlock"/>

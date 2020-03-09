@@ -170,14 +170,45 @@ namespace CourseProject
                     {
                         Title_SelectDealIndex = ((DataView)DG.ItemsSource).Table.Rows[index]["Номер дела"].ToString();
                     }
-                    break;
-                case "F_DataGrid_Deal":
-                    //TEXTBLOX.Text = index.ToString();
-                    break;
+                    break;                    
                 case "F_DataGrid_Document":
-                    //TEXTBLOX.Text =index.ToString();
+                    if (index == -1)
+                    {
+                        Title_SelectDocument = null;
+                    }
+                    else
+                    {
+                        Title_SelectDocument = ((DataView)DG.ItemsSource).Table.Rows[index]["Номер"].ToString();
+                    }
+                    break;
+                default:
+                    MessageBox.Show("#231644 Невозможно определить принадлежность к таблице");
                     break;
             }
+        }
+
+        /// <summary>
+        /// Создание чек суммы по всем полям
+        /// </summary>
+        private string CreateCheckSum(params string[] str)
+        {
+            string result = null;
+
+            foreach (string s in str)
+            {
+                result += s.GetHashCode().ToString();
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Создание чек суммы из полей обзора дела
+        /// </summary>
+        /// <returns></returns>
+        private string CreateCheckSumToDeal()
+        {
+            return CreateCheckSum(F_GridDeal_DateStorage.Text, F_GridDeal_DateOpen.Text, F_GridDeal_DateClose.Text, F_GridDeal_ReasonOpen.Text, F_GridDeal_assure.Text, F_GridDeal_Comment.Text);
         }
         #endregion
 
@@ -224,9 +255,9 @@ namespace CourseProject
                 {
                     F_GridDealList_TextBlock_TitleCountDeal.Text = "найдено " + value;
                 }
-
             }
         }
+
 
         /// <summary>
         /// Поиск записей в таблице Дело
@@ -292,13 +323,17 @@ namespace CourseProject
             finally
             {
                 MessageBox.Show("Запись удалена, обновите таблицу");
+                Title_SelectDealIndex = null;
             }
         }
 
+        /// <summary>
+        /// Событие нажатия кнопки добавления записи
+        /// </summary>
         private void F_GridDealList_AddDeal(object sender, RoutedEventArgs e)
         {
             Windows.AddDeal addDeal = new Windows.AddDeal();
-            string TimeDeal = null;
+            string TimeDeal;
 
             //Получение результата
             if (addDeal.ShowDialog() == true)
@@ -311,31 +346,378 @@ namespace CourseProject
                 return;
             }
 
-            //Проверка записи на повтор
-            if (UsAc.Execute(@"SELECT * FROM Дело where Дело.Номер_дела = """ + TimeDeal + @"""").Count != 0)
+            if (TimeDeal == "")
             {
-                MessageBox.Show("Дело с таким номером уже существует");
+                MessageBox.Show("Нельзя добавить пустую запись");
                 return;
             }
 
-            //Создание записи
-            Table.Deal.InsertInto("Номер_дела", $@"""{TimeDeal}""");
+            var TimeTable = UsAc.Execute(@"SELECT * FROM Дело where Дело.Номер_дела = """ + TimeDeal + @"""");
+
+            //Проверка записи на повтор
+            if (TimeTable.Count == 0)
+            {
+                //Создание записи
+                Table.Deal.InsertInto("Номер_дела", $@"""{TimeDeal}""");
+
+                TimeTable = UsAc.Execute(@"SELECT * FROM Дело where Дело.Номер_дела = """ + TimeDeal + @"""");
+            }
+            else
+            {
+                var enter = MessageBox.Show("Запись уже существует, перейти к ней?", "Повторная запись", MessageBoxButton.YesNo, MessageBoxImage.Information);
+
+                if (enter == MessageBoxResult.Yes)
+                {
+                    //Ничего, т.к. далее переход к записи
+                }
+                else if (enter == MessageBoxResult.No)
+                {
+                    return;
+                }
+            }
 
             //Переход к записи
-
-
-
-            /*
-            UsAc.RequestWithResponse(@"INSERT INTO Дело (Номер_дела) Values (""" + TimeBusiness + @""")");
-            DataView timedTab = UsAc.Request($@"SELECT * FROM Дело where Дело.Номер_дела = ""{TimeBusiness}""");
-
-            TableRowsToFieldViewBusiness(timedTab);
-
-            Update($@"SELECT Номер_документа, Название_документа, Число_страниц FROM Документ where Документ.Номер_дела = ""{TimeBusiness}""", ref tab2, ref DaGr2);
-            ViewBusinessShow();
-            */
+            EnterViewDeal(TimeDeal, TimeTable);
         }
 
+        /// <summary>
+        /// Событие нажатия кнопки редактирования
+        /// </summary>
+        private void F_GridDealList_Edit(object sender, RoutedEventArgs e)
+        {
+            if (Title_SelectDealIndex == null)
+            {
+                return;
+            }
+
+            var TimeTable = UsAc.Execute($@"SELECT * FROM Дело where Дело.Номер_дела = ""{Title_SelectDealIndex}""");
+
+            //Переход к записи
+            EnterViewDeal(Title_SelectDealIndex, TimeTable);
+        }
+
+        /// <summary>
+        /// Передача параметров в обзор дела/Список документов
+        /// </summary>
+        /// <param name="deal">Номер дела</param>
+        /// <param name="table">Таблица из которой берутся параметры. Null если таблица новая</param>
+        private void EnterViewDeal(string deal, DataView table)
+        {
+            Title_SelectDeal = deal;
+            FoundDocumentInList(deal, null);
+
+            if (table == null)
+            {
+                F_GridDeal_DateStorage.Text = null;
+                F_GridDeal_DateOpen.Text = null;
+                F_GridDeal_DateClose.Text = null;
+                F_GridDeal_ReasonOpen.Text = null;
+                F_GridDeal_assure.Text = null;
+                F_GridDeal_Comment.Text = null;
+            }
+            else
+            {
+                F_GridDeal_DateStorage.Text = table.Table.Rows[0]["Дата_введения_на_хранение"].ToString();
+                F_GridDeal_DateOpen.Text = table.Table.Rows[0]["Дата_открытия"].ToString();
+                F_GridDeal_DateClose.Text = table.Table.Rows[0]["Дата_закрытия"].ToString();
+                F_GridDeal_ReasonOpen.Text = table.Table.Rows[0]["Причина_открытия"].ToString();
+                F_GridDeal_assure.Text = table.Table.Rows[0]["Заверитель"].ToString();
+                F_GridDeal_Comment.Text = table.Table.Rows[0]["Комментарии"].ToString();
+            }
+
+            selectDealChecksum = CreateCheckSumToDeal();
+
+            F_GridDealList.Visibility = Visibility.Hidden;
+            F_GridDeal.Visibility = Visibility.Visible;
+            F_GridDocument.Visibility = Visibility.Hidden;
+        }
+        #endregion
+
+        #region код для дела/списка документов
+        /// <summary>
+        /// Возвращает или задает index выбранного дела (Индекс = номер дела)
+        /// </summary>
+        private string Title_SelectDeal
+        {
+            get
+            {
+                return _selectDeal;
+            }
+            set
+            {
+                _selectDeal = value;
+                F_GridDeal_TextBlock_TitleSelectDeal.Text = value;
+            }
+        }
+        private string _selectDeal = null;
+
+        /// <summary>
+        /// Возвращает или задает index выбранного документа (Индекс = номер документа)
+        /// </summary>
+        private string Title_SelectDocument
+        {
+            get
+            {
+                return _selectDocumentIndex;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    F_GridDocumentList_TextBlock_TitleSelectDocument.Text = value;
+                    F_GridDocumentList_TitleSelectDeal.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    F_GridDocumentList_TextBlock_TitleSelectDocument.Text = value;
+                    F_GridDocumentList_TitleSelectDeal.Visibility = Visibility.Visible;
+                }
+
+                _selectDocumentIndex = value;
+            }
+        }
+        private string _selectDocumentIndex = null;
+
+        /// <summary>
+        /// Задает число найденных документов
+        /// </summary>
+        private string Title_DocumentListCount
+        {
+            set
+            {
+                if (value == null)
+                {
+                    F_GridDeal_TextBlock_TitleCountDocument.Text = null;
+                }
+                else
+                {
+                    F_GridDeal_TextBlock_TitleCountDocument.Text = "найдено " + value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Используется для проверки изменений записи, если они не было сохранены
+        /// </summary>
+        private string selectDealChecksum = null;
+
+
+        /// <summary>
+        /// События нажатия кнопки назад
+        /// </summary>
+        private void F_GridDeal_Back(object sender, RoutedEventArgs e)
+        {
+            string CheckSum = CreateCheckSumToDeal();
+
+            if (selectDealChecksum != CheckSum)
+            {
+                var saved = MessageBox.Show("Сохранить изменения?", "Сохранение", MessageBoxButton.YesNoCancel, MessageBoxImage.Information);
+
+                if (saved == MessageBoxResult.Yes)
+                {
+                    SaveChangeForDeal();
+                }
+                else if (saved == MessageBoxResult.No)
+                {
+                    //Ничего...
+                }
+                else if (saved == MessageBoxResult.Cancel)
+                {
+                    return;
+                }
+            }
+
+            F_GridDealList.Visibility = Visibility.Visible;
+            F_GridDeal.Visibility = Visibility.Hidden;
+            F_GridDocument.Visibility = Visibility.Hidden;
+        }
+
+        /// <summary>
+        /// Событие нажатия кнопки сброса списка документов
+        /// </summary>
+        private void F_GridDocumentList_ResetDealList(object sender, RoutedEventArgs e)
+        {
+            FoundDocumentInList(Title_SelectDeal, null);
+        }
+
+        /// <summary>
+        /// Событие нажатия кнопки для поиска документа
+        /// </summary>
+        private void F_GridDeal_FoundInDealList(object sender, RoutedEventArgs e)
+        {
+            FoundDocumentInList(Title_SelectDeal, F_GridDeal_TextBoxFound.Text);
+        }
+
+        /// <summary>
+        /// Событие нажатия кнопки в поле поиска документа. Отлов кнопки Enter
+        /// </summary>
+        private void F_GridDeal_TextBoxFoundKeyPress(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                FoundDocumentInList(Title_SelectDeal, F_GridDeal_TextBoxFound.Text);
+            }
+        }
+
+        /// <summary>
+        /// Событие нажатия кнопки удаления записи в списке документов
+        /// </summary>
+        private void F_GridDeal_DeleteDeal(object sender, RoutedEventArgs e)
+        {
+            if (Title_SelectDocument == null)
+            {
+                return;
+            }
+
+            try
+            {
+                Table.Document.DeleteFrom($@"Номер_дела = ""{Title_SelectDeal}"" and Номер_документа = {Title_SelectDocument}");
+            }
+            finally
+            {
+                MessageBox.Show("Запись удалена, обновите таблицу");
+                Title_SelectDocument = null;
+            }
+        }
+
+        /// <summary>
+        /// Событие нажатия кнопки редактирования
+        /// </summary>
+        private void F_GridDeal_Edit(object sender, RoutedEventArgs e)
+        {
+            if (Title_SelectDocument == null)
+            {
+                return;
+            }
+
+            return; 
+            //TODO: пилить
+            var TimeTable = UsAc.Execute($@"SELECT * FROM Дело where Дело.Номер_дела = ""{Title_SelectDealIndex}""");
+
+            //Переход к записи
+            EnterViewDeal(Title_SelectDealIndex, TimeTable);
+        }
+
+        /// <summary>
+        /// Событие нажатия кнопки добавления записи
+        /// </summary>
+        private void F_GridDeal_AddDeal(object sender, RoutedEventArgs e)
+        {
+            return;
+            //TODO: пилить
+            Windows.AddDeal addDeal = new Windows.AddDeal();
+            string TimeDeal;
+
+            //Получение результата
+            if (addDeal.ShowDialog() == true)
+            {
+                TimeDeal = addDeal.Deal;
+            }
+            else
+            {
+                MessageBox.Show("Запись была отменена");
+                return;
+            }
+
+            if (TimeDeal == "")
+            {
+                MessageBox.Show("Нельзя добавить пустую запись");
+                return;
+            }
+
+            var TimeTable = UsAc.Execute(@"SELECT * FROM Дело where Дело.Номер_дела = """ + TimeDeal + @"""");
+
+            //Проверка записи на повтор
+            if (TimeTable.Count == 0)
+            {
+                //Создание записи
+                Table.Deal.InsertInto("Номер_дела", $@"""{TimeDeal}""");
+
+                TimeTable = UsAc.Execute(@"SELECT * FROM Дело where Дело.Номер_дела = """ + TimeDeal + @"""");
+            }
+            else
+            {
+                var enter = MessageBox.Show("Запись уже существует, перейти к ней?", "Повторная запись", MessageBoxButton.YesNo, MessageBoxImage.Information);
+
+                if (enter == MessageBoxResult.Yes)
+                {
+                    //Ничего, т.к. далее переход к записи
+                }
+                else if (enter == MessageBoxResult.No)
+                {
+                    return;
+                }
+            }
+
+            //Переход к записи
+            EnterViewDeal(TimeDeal, TimeTable);
+        }
+
+        /// <summary>
+        /// Метод сохранения изменения для дела
+        /// </summary>
+        private void SaveChangeForDeal()
+        {
+            string set = $@"Заверитель = ""{F_GridDeal_assure.Text}"", ";
+            set += $@"Причина_открытия = ""{F_GridDeal_ReasonOpen.Text}"", ";
+
+            if (F_GridDeal_DateStorage.Text == "")
+            {
+                set += $@"Дата_введения_на_хранение = null, ";
+            }
+            else
+            {
+                set += $@"Дата_введения_на_хранение = ""{F_GridDeal_DateStorage.Text}"", ";
+            }
+
+            if (F_GridDeal_DateOpen.Text == "")
+            {
+                set += $@"Дата_открытия = null, ";
+            }
+            else
+            {
+                set += $@"Дата_открытия = ""{F_GridDeal_DateOpen.Text}"", ";
+            }
+
+            if (F_GridDeal_DateClose.Text == "")
+            {
+                set += $@"Дата_закрытия = null, ";
+            }
+            else
+            {
+                set += $@"Дата_закрытия = ""{F_GridDeal_DateClose.Text}"", ";
+            }
+
+            set += $@"Комментарии = ""{F_GridDeal_Comment.Text}""";
+
+            Table.Deal.Update(set, $@"Дело.Номер_дела = ""{Title_SelectDeal}""");
+        }
+
+        /// <summary>
+        /// Поиск записей в таблице Документ
+        /// </summary>
+        /// <param name="deal">значение поиска по номеру дела</param>
+        /// <param name="number">значение поиска по номеру документа</param>
+        private void FoundDocumentInList(string deal, string number)
+        {
+            if (number == null)
+            {
+                Table.Document.Where = $@"Номер_дела = ""{deal}""";
+            }
+            else
+            {
+                if (!int.TryParse(number, out int num))
+                {
+                    return;
+                }
+
+                Table.Document.Where = $@"Номер_дела = ""{deal}"" and Номер_документа = {number}";
+            }
+
+            Table.Document.UpdateTable();
+            F_DataGrid_Document.ItemsSource = Table.Document.DVTable;
+            Title_DocumentListCount = Table.Document.DVTable.Count.ToString();
+        }
         #endregion
     }
 }

@@ -18,7 +18,7 @@
             this.UsAc = UsAc;
 
             Deal = new UsingDataView(UsAc, "Номер_дела AS [Номер дела], Дата_введения_на_хранение AS [Введено на хранение], Причина_открытия AS [Причина открытия], Заверитель", "Дело", null, null);
-            Document = new UsingDataView(UsAc, "*", "Документ", null, null);
+            Document = new UsingDataView(UsAc, "Номер_документа as [Номер], Название_документа as [Название], Число_страниц as [Число страниц]", "Документ", null, null);
             DocumentContent = new UsingDataView(UsAc, "*", "Содержимое_документа", null, null);
             Users = new UsingDataView(UsAc, "*", "Пользователи", null, null);
         }
