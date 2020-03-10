@@ -47,17 +47,18 @@ namespace CourseProject
         {
             InitializeComponent();
             CreateConnection();
-            AutorizationUser();
 
-            WayFound();
-
-            FoundDealInList(null);
+            if (AutorizationUser())
+            {
+                //Если пользователь был авторизован
+                WayFound();
+                FoundDealInList(null);
+            }
         }
 
         /// <summary>
         /// Создание подключения
         /// </summary>
-        /// <returns>Успех подключения</returns>
         private void CreateConnection()
         {
             //Определение пути до БД
@@ -94,7 +95,7 @@ namespace CourseProject
         /// <summary>
         /// Подключение к БД и авторизация пользователя
         /// </summary>
-        private void AutorizationUser()
+        private bool AutorizationUser()
         {
             //Авторизация пользователя
             var window = new Windows.AuthorizationWindow(Table.Users);
@@ -102,12 +103,13 @@ namespace CourseProject
             {
                 UserFIO = window.FIO;
                 this.Show();
+                return true;
             }
             else
             {
                 //Вход был отменен
                 this.Close();
-                return;
+                return false;
             }
         }
 
