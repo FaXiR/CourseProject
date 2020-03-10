@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using CourseProject.Modules;
 using Microsoft.Win32;
 
@@ -82,8 +75,10 @@ namespace CourseProject
             //Подключение к БД
             try
             {
-                UsAc = new UsingAccess(BDWay, null, null, null);
-                UsAc.AutoOpen = true;
+                UsAc = new UsingAccess(BDWay, null, null, null)
+                {
+                    AutoOpen = true
+                };
             }
             catch
             {
@@ -610,12 +605,10 @@ namespace CourseProject
                 return;
             }
 
-            return;
-            //TODO: пилить
-            var TimeTable = UsAc.Execute($@"SELECT * FROM Дело where Дело.Номер_дела = ""{Title_SelectDealIndex}""");
+            var TimeTable = UsAc.Execute($@"SELECT * FROM Документ where Номер_документа = {Title_SelectDocument}");
 
             //Переход к записи
-            EnterViewDeal(Title_SelectDealIndex, TimeTable);
+            EnterViewDocument(Title_SelectDocument, TimeTable);
         }
 
         /// <summary>
@@ -713,8 +706,8 @@ namespace CourseProject
         /// <param name="table">Таблица из которой берутся параметры. Null если таблица новая</param>
         private void EnterViewDocument(string document, DataView table)
         {
-            Title_SelectDocument = document;
-            FoundImageInList(document, null);
+            selectDocument = document;
+            FoundImageInList(document);
 
             if (table == null)
             {
@@ -729,7 +722,7 @@ namespace CourseProject
                 F_GridDocument_Comment.Text = table.Table.Rows[0]["Комментарии"].ToString();
             }
 
-            selectDocumentlChecksum = CreateCheckSumToDocument();
+            selectDocumentChecksum = CreateCheckSumToDocument();
 
             F_GridDealList.Visibility = Visibility.Hidden;
             F_GridDeal.Visibility = Visibility.Hidden;
@@ -743,7 +736,7 @@ namespace CourseProject
         /// <summary>
         /// Используется для проверки изменений записи, если они не было сохранены
         /// </summary>
-        private string selectDocumentlChecksum = null;
+        private string selectDocumentChecksum = null;
 
         /// <summary>
         /// Возвращает или задает index выбранного изображения (Индекс = название файла)
@@ -770,7 +763,25 @@ namespace CourseProject
                 _selectImageIndex = value;
             }
         }
-        string _selectImageIndex = null;
+        private string _selectImageIndex = null;
+        
+        /// <summary>
+        /// Возращает или задает выбранный ранее документ
+        /// </summary>
+        private string selectDocument
+        {
+            get
+            {
+                return _selectDocument;
+            }
+            set
+            {
+                F_GridDocument_TextBlock_TitleSelectDocument.Text = value;
+                _selectDocument = value;
+
+            }
+        }
+        private string _selectDocument = null;
 
         /// <summary>
         /// Индекс для добавления изображения
@@ -781,6 +792,7 @@ namespace CourseProject
         /// Расположение папки со скан образами
         /// </summary>
         string PreImageWay;
+
 
         /// <summary>
         /// Указание пути для доступа к изображениям
@@ -808,9 +820,9 @@ namespace CourseProject
         {
             string set = $@"Название_документа = ""{F_GridDocument_DocumentName.Text}"", ";
             set += $@"Число_страниц = {F_GridDocument_CountPage.Text}, ";
-            set += $@"Комментарий = ""{F_GridDocument_Comment.Text}""";
+            set += $@"Комментарии = ""{F_GridDocument_Comment.Text}""";
 
-            Table.Document.Update(set, $@"Номер_документа = {Title_SelectDocument}");
+            Table.Document.Update(set, $@"Номер_документа = {selectDocument}");
         }
 
         /// <summary>
@@ -820,7 +832,7 @@ namespace CourseProject
         {
             string CheckSum = CreateCheckSumToDocument();
 
-            if (selectDocumentlChecksum != CheckSum)
+            if (selectDocumentChecksum != CheckSum)
             {
                 var saved = MessageBox.Show("Сохранить изменения?", "Сохранение", MessageBoxButton.YesNoCancel, MessageBoxImage.Information);
 
@@ -841,6 +853,29 @@ namespace CourseProject
             F_GridDealList.Visibility = Visibility.Hidden;
             F_GridDeal.Visibility = Visibility.Visible;
             F_GridDocument.Visibility = Visibility.Hidden;
+
+            selectImageIndex = null;
+            F_DataGrid_Image.Children.Clear();
+        }
+
+        /// <summary>
+        /// События нажатия кнопки открытия файла
+        /// </summary>
+        private void F_GridDocument_OpenImage(object sender, RoutedEventArgs e)
+        {
+            if (selectImageIndex == null)
+            {
+                return;
+            }
+            try
+            {
+                Process.Start(PreImageWay + selectImageIndex);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Ошибка", MessageBoxButton.OK);
+                return;
+            }
         }
 
         /// <summary>
@@ -848,29 +883,32 @@ namespace CourseProject
         /// </summary>
         private void F_GridDocument_ResetImageList(object sender, RoutedEventArgs e)
         {
-            FoundImageInList(null);
+            FoundImageInList(selectDocument);
         }
 
         /// <summary>
-        /// Поиск записей в таблице Дело
+        /// Поиск записей в таблице содержимое_документа
         /// </summary>
         /// <param name="found">значение поиска по номеру дела</param>
         private void FoundImageInList(string found)
         {
+            selectImageIndex = null;
+
             if (found == null)
             {
-                Table.Deal.Where = null;
+                Table.DocumentContent.Where = null;
             }
             else
             {
-                Table.Deal.Where = $@"Номер_дела Like ""%{found}%""";
+                Table.DocumentContent.Where = $@"Номер_документа = {found}";
             }
 
-            Table.Deal.UpdateTable();
-            F_DataGrid_Deallist.ItemsSource = Table.Deal.DVTable;
-            Title_DealListCount = Table.Deal.DVTable.Count.ToString();
+            Table.DocumentContent.UpdateTable();
+
+            //Вывод изображений
+            OutputImageToWrapPanel(Table.DocumentContent.DVTable);
         }
-               
+
         /// <summary>
         /// Событие выбора изображения
         /// </summary>
@@ -934,7 +972,7 @@ namespace CourseProject
             File.Copy(fileName, PreImageWay + NewFileName.ToString() + fileFormat);
 
             //Добавление записи к БД
-            Table.DocumentContent.InsertInto("Номер_документа, Путь_к_скан_образу", $@"{selectImageIndex}, ""{NewFileName + fileFormat}""");
+            Table.DocumentContent.InsertInto("Номер_документа, Путь_к_скан_образу", $@"{selectDocument}, ""{NewFileName + fileFormat}""");
         }
 
         /// <summary>
@@ -950,13 +988,69 @@ namespace CourseProject
 
             try
             {
-                Table.DocumentContent.DeleteFrom($@"Содержимое_документа.Номер_документа = {Title_SelectDocument} and Содержимое_документа.Путь_к_скан_образу = ""{selectImageIndex}""");
+                Table.DocumentContent.DeleteFrom($@"Содержимое_документа.Номер_документа = {selectDocument} and Содержимое_документа.Путь_к_скан_образу = ""{selectImageIndex}""");
                 selectImageIndex = null;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "Ошибка", MessageBoxButton.OK);
                 return;
+            }
+        }
+
+        /// <summary>
+        /// Вывод изображений на экран
+        /// </summary>
+        private void OutputImageToWrapPanel(DataView tab)
+        {
+            F_DataGrid_Image.Children.Clear();
+
+            for (int i = 0; i < tab.Count; i++)
+            {
+                bool add = true;
+                Image image = null;
+                string name = "IMG_" + tab.Table.Rows[i]["Путь_к_скан_образу"].ToString().Replace(".", "IMG_DOT");
+
+                try
+                {
+                    image = new Image()
+                    {
+                        Source = new BitmapImage(new Uri(PreImageWay + tab.Table.Rows[i]["Путь_к_скан_образу"].ToString())),
+                        Margin = new Thickness(10),
+                        Name = name
+                    };
+                    image.MouseDown += ImageInBunch_MouseDown;
+                }
+                catch (NotSupportedException)
+                {
+                    image = new Image()
+                    {
+                        Source = new BitmapImage(new Uri("Resources/FileNotImage.jpg", UriKind.Relative)),
+                        Margin = new Thickness(10),
+                        Name = name,
+                    };
+                    image.MouseDown += ImageInBunch_MouseDown;
+                }
+                catch (FileNotFoundException)
+                {
+                    image = new Image()
+                    {
+                        Source = new BitmapImage(new Uri("Resources/FileNotFound.jpg", UriKind.Relative)),
+                        Margin = new Thickness(10),
+                        Name = name
+                    };
+                    image.MouseDown += ImageInBunch_MouseDown;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString(), "Ошибка", MessageBoxButton.OK);
+                    add = false;
+                }
+
+                if (add)
+                {
+                    F_DataGrid_Image.Children.Add(image);
+                }
             }
         }
         #endregion

@@ -253,7 +253,6 @@
                     </WrapPanel>
                 </Grid>
 
-
                 <!-- Рабочая часть -->
                 <Grid Grid.Row="5">
 
@@ -262,6 +261,13 @@
                         <StackPanel Orientation="Horizontal">
                             <Image Source="Resources/Add.png"/>
                             <TextBlock Text=" Добавить" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Margin="100,1,3,1" Height="32" Width="96" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="F_GridDocument_OpenImage">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Resources/Open.png"/>
+                            <TextBlock Text=" Перейти" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
