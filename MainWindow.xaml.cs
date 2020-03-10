@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CourseProject.Modules;
+using Microsoft.Win32;
 
 namespace CourseProject
 {
@@ -43,6 +44,8 @@ namespace CourseProject
         /// </summary>
         private string UserFIO = null;
 
+
+
         #region базовый код
         /// <summary>
         /// Логика взаимодействия для MainWindow.xaml
@@ -52,6 +55,8 @@ namespace CourseProject
             InitializeComponent();
             CreateConnection();
             AutorizationUser();
+
+            WayFound();
 
             FoundDealInList(null);
         }
@@ -137,6 +142,8 @@ namespace CourseProject
         }
         #endregion
 
+
+
         #region общие методы
         /// <summary>
         /// Событие автогенерации колонок. Отлавливает и корректирует поля Даты.
@@ -170,7 +177,7 @@ namespace CourseProject
                     {
                         Title_SelectDealIndex = ((DataView)DG.ItemsSource).Table.Rows[index]["Номер дела"].ToString();
                     }
-                    break;                    
+                    break;
                 case "F_DataGrid_Document":
                     if (index == -1)
                     {
@@ -202,6 +209,15 @@ namespace CourseProject
             return result;
         }
 
+
+        /// <summary>
+        /// Создание чек суммы из полей обзора документа
+        /// </summary>
+        private string CreateCheckSumToDocument()
+        {
+            return CreateCheckSum(F_GridDocument_DocumentName.Text, F_GridDocument_CountPage.Text, F_GridDocument_Comment.Text);
+        }
+
         /// <summary>
         /// Создание чек суммы из полей обзора дела
         /// </summary>
@@ -211,6 +227,8 @@ namespace CourseProject
             return CreateCheckSum(F_GridDeal_DateStorage.Text, F_GridDeal_DateOpen.Text, F_GridDeal_DateClose.Text, F_GridDeal_ReasonOpen.Text, F_GridDeal_assure.Text, F_GridDeal_Comment.Text);
         }
         #endregion
+
+
 
         #region код для списка дел
         /// <summary>
@@ -433,6 +451,8 @@ namespace CourseProject
         }
         #endregion
 
+
+
         #region код для дела/списка документов
         /// <summary>
         /// Возвращает или задает index выбранного дела (Индекс = номер дела)
@@ -590,7 +610,7 @@ namespace CourseProject
                 return;
             }
 
-            return; 
+            return;
             //TODO: пилить
             var TimeTable = UsAc.Execute($@"SELECT * FROM Дело where Дело.Номер_дела = ""{Title_SelectDealIndex}""");
 
@@ -603,54 +623,21 @@ namespace CourseProject
         /// </summary>
         private void F_GridDeal_AddDeal(object sender, RoutedEventArgs e)
         {
-            return;
-            //TODO: пилить
-            Windows.AddDeal addDeal = new Windows.AddDeal();
-            string TimeDeal;
-
-            //Получение результата
-            if (addDeal.ShowDialog() == true)
+            string DocumentNum = UsAc.Execute("SELECT MAX(Номер_документа) as Номер_документа From Документ").Table.Rows[0]["Номер_документа"].ToString();
+            if (DocumentNum == "")
             {
-                TimeDeal = addDeal.Deal;
+                DocumentNum = "0";
             }
-            else
-            {
-                MessageBox.Show("Запись была отменена");
-                return;
-            }
+            long NewDealDocumentNum = Convert.ToInt64(DocumentNum) + 1;
 
-            if (TimeDeal == "")
-            {
-                MessageBox.Show("Нельзя добавить пустую запись");
-                return;
-            }
+            //Создание записи
+            Table.Document.InsertInto($@"Номер_дела, Номер_документа", $@"""{Title_SelectDeal}"", {NewDealDocumentNum}");
 
-            var TimeTable = UsAc.Execute(@"SELECT * FROM Дело where Дело.Номер_дела = """ + TimeDeal + @"""");
-
-            //Проверка записи на повтор
-            if (TimeTable.Count == 0)
-            {
-                //Создание записи
-                Table.Deal.InsertInto("Номер_дела", $@"""{TimeDeal}""");
-
-                TimeTable = UsAc.Execute(@"SELECT * FROM Дело where Дело.Номер_дела = """ + TimeDeal + @"""");
-            }
-            else
-            {
-                var enter = MessageBox.Show("Запись уже существует, перейти к ней?", "Повторная запись", MessageBoxButton.YesNo, MessageBoxImage.Information);
-
-                if (enter == MessageBoxResult.Yes)
-                {
-                    //Ничего, т.к. далее переход к записи
-                }
-                else if (enter == MessageBoxResult.No)
-                {
-                    return;
-                }
-            }
+            //Создание таблицы
+            var TimeTable = UsAc.Execute($@"SELECT * FROM Документ WHERE Номер_документа = {NewDealDocumentNum}");
 
             //Переход к записи
-            EnterViewDeal(TimeDeal, TimeTable);
+            EnterViewDocument(NewDealDocumentNum.ToString(), TimeTable);
         }
 
         /// <summary>
@@ -717,6 +704,260 @@ namespace CourseProject
             Table.Document.UpdateTable();
             F_DataGrid_Document.ItemsSource = Table.Document.DVTable;
             Title_DocumentListCount = Table.Document.DVTable.Count.ToString();
+        }
+
+        /// <summary>
+        /// Передача параметров в обзор документа
+        /// </summary>
+        /// <param name="document">Номер дела</param>
+        /// <param name="table">Таблица из которой берутся параметры. Null если таблица новая</param>
+        private void EnterViewDocument(string document, DataView table)
+        {
+            Title_SelectDocument = document;
+            FoundImageInList(document, null);
+
+            if (table == null)
+            {
+                F_GridDocument_DocumentName.Text = null;
+                F_GridDocument_CountPage.Text = null;
+                F_GridDocument_Comment.Text = null;
+            }
+            else
+            {
+                F_GridDocument_DocumentName.Text = table.Table.Rows[0]["Название_документа"].ToString();
+                F_GridDocument_CountPage.Text = table.Table.Rows[0]["Число_страниц"].ToString();
+                F_GridDocument_Comment.Text = table.Table.Rows[0]["Комментарии"].ToString();
+            }
+
+            selectDocumentlChecksum = CreateCheckSumToDocument();
+
+            F_GridDealList.Visibility = Visibility.Hidden;
+            F_GridDeal.Visibility = Visibility.Hidden;
+            F_GridDocument.Visibility = Visibility.Visible;
+        }
+        #endregion
+
+
+
+        #region код для документа/содержание документа
+        /// <summary>
+        /// Используется для проверки изменений записи, если они не было сохранены
+        /// </summary>
+        private string selectDocumentlChecksum = null;
+
+        /// <summary>
+        /// Возвращает или задает index выбранного изображения (Индекс = название файла)
+        /// </summary>
+        private string selectImageIndex
+        {
+            get
+            {
+                return _selectImageIndex;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    F_GridDocument_TextBlock_TitleSelectImage.Text = value;
+                    F_GridDocument_TitleSelectImage.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    F_GridDocument_TextBlock_TitleSelectImage.Text = value;
+                    F_GridDocument_TitleSelectImage.Visibility = Visibility.Visible;
+                }
+
+                _selectImageIndex = value;
+            }
+        }
+        string _selectImageIndex = null;
+
+        /// <summary>
+        /// Индекс для добавления изображения
+        /// </summary>
+        private int FilterIndex = 1;
+
+        /// <summary>
+        /// Расположение папки со скан образами
+        /// </summary>
+        string PreImageWay;
+
+        /// <summary>
+        /// Указание пути для доступа к изображениям
+        /// </summary>
+        private void WayFound()
+        {
+            if ((BDWay.LastIndexOf('\\') == -1) == (BDWay.LastIndexOf('/') == -1))
+            {
+                PreImageWay = Environment.CurrentDirectory + "/image/";
+            }
+            else if (BDWay.LastIndexOf('\\') > BDWay.LastIndexOf('/'))
+            {
+                PreImageWay = BDWay.Substring(0, BDWay.LastIndexOf('\\')) + "\\image\\";
+            }
+            else if (BDWay.LastIndexOf('\\') < BDWay.LastIndexOf('/'))
+            {
+                PreImageWay = BDWay.Substring(0, BDWay.LastIndexOf('/')) + "/image/";
+            }
+        }
+
+        /// <summary>
+        /// Метод сохранения изменения для документа
+        /// </summary>
+        private void SaveChangeForDocument()
+        {
+            string set = $@"Название_документа = ""{F_GridDocument_DocumentName.Text}"", ";
+            set += $@"Число_страниц = {F_GridDocument_CountPage.Text}, ";
+            set += $@"Комментарий = ""{F_GridDocument_Comment.Text}""";
+
+            Table.Document.Update(set, $@"Номер_документа = {Title_SelectDocument}");
+        }
+
+        /// <summary>
+        /// События нажатия кнопки назад
+        /// </summary>
+        private void F_GridDocument_Back(object sender, RoutedEventArgs e)
+        {
+            string CheckSum = CreateCheckSumToDocument();
+
+            if (selectDocumentlChecksum != CheckSum)
+            {
+                var saved = MessageBox.Show("Сохранить изменения?", "Сохранение", MessageBoxButton.YesNoCancel, MessageBoxImage.Information);
+
+                if (saved == MessageBoxResult.Yes)
+                {
+                    SaveChangeForDocument();
+                }
+                else if (saved == MessageBoxResult.No)
+                {
+                    //Ничего...
+                }
+                else if (saved == MessageBoxResult.Cancel)
+                {
+                    return;
+                }
+            }
+
+            F_GridDealList.Visibility = Visibility.Hidden;
+            F_GridDeal.Visibility = Visibility.Visible;
+            F_GridDocument.Visibility = Visibility.Hidden;
+        }
+
+        /// <summary>
+        /// Событие нажатия кнопки сброса изображений
+        /// </summary>
+        private void F_GridDocument_ResetImageList(object sender, RoutedEventArgs e)
+        {
+            FoundImageInList(null);
+        }
+
+        /// <summary>
+        /// Поиск записей в таблице Дело
+        /// </summary>
+        /// <param name="found">значение поиска по номеру дела</param>
+        private void FoundImageInList(string found)
+        {
+            if (found == null)
+            {
+                Table.Deal.Where = null;
+            }
+            else
+            {
+                Table.Deal.Where = $@"Номер_дела Like ""%{found}%""";
+            }
+
+            Table.Deal.UpdateTable();
+            F_DataGrid_Deallist.ItemsSource = Table.Deal.DVTable;
+            Title_DealListCount = Table.Deal.DVTable.Count.ToString();
+        }
+               
+        /// <summary>
+        /// Событие выбора изображения
+        /// </summary>
+        private void ImageInBunch_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            string name = ((Image)e.OriginalSource).Name;
+            name = name.Substring(4);
+            name = name.Replace("IMG_DOT", ".");
+            selectImageIndex = name;
+        }
+
+        /// <summary>
+        /// Событие нажатия кнопки добавления изображения
+        /// </summary>
+        private void F_GridDocument_AddImage(object sender, RoutedEventArgs e)
+        {
+            //Получение пути до файла
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Filter = "Все файлы|*.*|JPEG (*.jpg; *.jpeg; *.jpe; *.ifif)|*.jpg; *.jpeg; *.jpe; *.ifif|PNG (*.png)|*.png",
+                FilterIndex = FilterIndex
+            };
+
+            if (dialog.ShowDialog() == false)
+            {
+                return;
+            }
+
+            string fileName = dialog.FileName;
+            string fileFormat = dialog.FileName.Substring(fileName.IndexOf('.'));
+            FilterIndex = dialog.FilterIndex;
+
+            //Получение списка файлов с типом данных с полным путем
+            string[] AllImage = Directory.GetFiles(PreImageWay);
+
+            long NewFileName = 0;
+
+            //Получение списка файлов только с именем фала (без пути и типа данных)
+            for (int i = 0; i < AllImage.Length; i++)
+            {
+                AllImage[i] = AllImage[i].Substring(AllImage[i].LastIndexOf('/') + 1);
+                AllImage[i] = AllImage[i].Substring(AllImage[i].LastIndexOf('\\') + 1);
+                AllImage[i] = AllImage[i].Substring(0, AllImage[i].IndexOf('.'));
+
+                try
+                {
+                    long TimedName = Convert.ToInt64(AllImage[i]);
+                    if (TimedName > NewFileName)
+                    {
+                        NewFileName = TimedName;
+                    }
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+            NewFileName++;
+
+            //Копирование в папку image
+            File.Copy(fileName, PreImageWay + NewFileName.ToString() + fileFormat);
+
+            //Добавление записи к БД
+            Table.DocumentContent.InsertInto("Номер_документа, Путь_к_скан_образу", $@"{selectImageIndex}, ""{NewFileName + fileFormat}""");
+        }
+
+        /// <summary>
+        /// Событие нажатия удаления изображения
+        /// </summary>
+        private void F_GridDocument_DeleteImage(object sender, RoutedEventArgs e)
+        {
+            if (selectImageIndex == null)
+            {
+                MessageBox.Show("Файл не выбран");
+                return;
+            }
+
+            try
+            {
+                Table.DocumentContent.DeleteFrom($@"Содержимое_документа.Номер_документа = {Title_SelectDocument} and Содержимое_документа.Путь_к_скан_образу = ""{selectImageIndex}""");
+                selectImageIndex = null;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Ошибка", MessageBoxButton.OK);
+                return;
+            }
         }
         #endregion
     }
