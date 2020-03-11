@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -223,6 +224,60 @@ namespace CourseProject
         {
             return CreateCheckSum(F_GridDeal_DateStorage.Text, F_GridDeal_DateOpen.Text, F_GridDeal_DateClose.Text, F_GridDeal_ReasonOpen.Text, F_GridDeal_assure.Text, F_GridDeal_Comment.Text);
         }
+
+
+        /// <summary>
+        /// Вывод таблицы в эксель
+        /// </summary>
+        /// <param name="what_save">Таблица для вывода</param>
+        private void OutToExcell(string title, DataView table)
+        {
+            SaveFileDialog sv = new SaveFileDialog();
+            sv.Filter = "Excel файлы|*.xlsx|Все файлы|*.*";
+            if (sv.ShowDialog() == false)
+            {
+                return;
+            }
+            string filename = sv.FileName;
+
+            var excelapp = new Microsoft.Office.Interop.Excel.Application();
+            var workbook = excelapp.Workbooks.Add();
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = workbook.ActiveSheet;
+
+            //Получение названий колонок
+            var ColumnName = new List<string>();
+            for (int i = 0; i < table.Table.Columns.Count; i++)
+            {
+                ColumnName.Add(table.Table.Columns[i].ToString());
+            }
+            //Выводим название колонок
+            for (int x = 0; x < ColumnName.Count; x++)
+            {
+                worksheet.Rows[2].Columns[x + 1] = ColumnName[x];
+            }
+            //заполням ячейки
+            for (int y = 3; y < table.Count + 3; y++)
+            {
+                for (int x = 0; x < ColumnName.Count; x++)
+                {
+                    worksheet.Rows[y].Columns[x+1] = table.Table.Rows[y-3][ColumnName[x]];
+                }
+            }
+
+            // Выделяем диапазон ячеек от A1 до нужной         
+            Microsoft.Office.Interop.Excel.Range _excelCells1 = (Microsoft.Office.Interop.Excel.Range)worksheet.get_Range("A1", "G1").Cells;
+            // Производим объединение
+            _excelCells1.Merge(Type.Missing);
+            //Задаем титульник
+            worksheet.Cells[1, 1] = title;
+
+            excelapp.AlertBeforeOverwriting = false;
+            workbook.SaveAs(filename);            
+            excelapp.Quit();
+
+            //TODO: запускаем
+            Process.Start(filename);
+        }
         #endregion
 
 
@@ -300,6 +355,15 @@ namespace CourseProject
         private void F_GridDealList_ResetDealList(object sender, RoutedEventArgs e)
         {
             FoundDealInList(null);
+        }
+
+        /// <summary>
+        /// Событие нажатия кнопки вывода в Excell
+        /// </summary>
+        private void F_GridDealList_ToExcell(object sender, RoutedEventArgs e)
+        {
+            var table = UsAc.Execute("Select Номер_дела as [Номер дела], Дата_введения_на_хранение as [Введено на хранение], Причина_открытия as [Причина открытия], Дата_открытия as [Дата открытия], Дата_закрытия as [Дата закрытия], Заверитель FROM Дело");
+            OutToExcell("help", table);
         }
 
         /// <summary>
@@ -766,7 +830,7 @@ namespace CourseProject
             }
         }
         private string _selectImageIndex = null;
-        
+
         /// <summary>
         /// Возращает или задает выбранный ранее документ
         /// </summary>
