@@ -229,7 +229,6 @@ namespace CourseProject
         /// <summary>
         /// Вывод таблицы в эксель
         /// </summary>
-        /// <param name="what_save">Таблица для вывода</param>
         private void OutToExcell(string title, DataView table)
         {
             SaveFileDialog sv = new SaveFileDialog();
@@ -265,11 +264,27 @@ namespace CourseProject
             }
 
             // Выделяем диапазон ячеек от A1 до нужной         
-            Microsoft.Office.Interop.Excel.Range _excelCells1 = (Microsoft.Office.Interop.Excel.Range)worksheet.get_Range("A1", "G1").Cells;
+            Microsoft.Office.Interop.Excel.Range _excelCells1 = (Microsoft.Office.Interop.Excel.Range)worksheet.get_Range((Microsoft.Office.Interop.Excel.Range)worksheet.Cells[1, 1], (Microsoft.Office.Interop.Excel.Range)worksheet.Cells[1, ColumnName.Count]).Cells;
             // Производим объединение
             _excelCells1.Merge(Type.Missing);
             //Задаем титульник
             worksheet.Cells[1, 1] = title;
+            //Размер текста
+            _excelCells1.Cells.Font.Size = 16;
+            //Выравнивание
+            _excelCells1.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+            //Задание bold для текста
+            _excelCells1.Font.Bold = true;
+
+            //Выделение всех ячеек
+            Microsoft.Office.Interop.Excel.Range _excelCells2 = (Microsoft.Office.Interop.Excel.Range)worksheet.get_Range((Microsoft.Office.Interop.Excel.Range)worksheet.Cells[1, 1], (Microsoft.Office.Interop.Excel.Range)worksheet.Cells[table.Count+2, ColumnName.Count]).Cells;
+
+            //Выставление линий 
+            _excelCells2.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+            _excelCells2.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+            _excelCells2.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlInsideHorizontal).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+            _excelCells2.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlInsideVertical).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+            _excelCells2.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
 
             excelapp.AlertBeforeOverwriting = false;
             workbook.SaveAs(filename);            
@@ -363,7 +378,7 @@ namespace CourseProject
         private void F_GridDealList_ToExcell(object sender, RoutedEventArgs e)
         {
             var table = UsAc.Execute("Select Номер_дела as [Номер дела], Дата_введения_на_хранение as [Введено на хранение], Причина_открытия as [Причина открытия], Дата_открытия as [Дата открытия], Дата_закрытия as [Дата закрытия], Заверитель FROM Дело");
-            OutToExcell("help", table);
+            OutToExcell("Список дел", table);
         }
 
         /// <summary>

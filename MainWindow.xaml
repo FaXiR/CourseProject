@@ -24,9 +24,6 @@
                 </Grid.RowDefinitions>
                 <!-- Титульная часть -->
                 <Grid Grid.Row="0" Margin="4,0,4,0" VerticalAlignment="Center">
-                    <Button Margin="1,1,1,1" Height="18" Width="18" Click="F_GridDealList_ToExcell" HorizontalAlignment="Right">
-                        <Image Source="Resources/Save.png"/>
-                    </Button>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                         <Button Margin="1,1,4,1" Height="18" Width="18" Click="F_GridDealList_ResetDealList">
                             <Image Source="Resources/Update.png"/>
@@ -34,10 +31,13 @@
                         <TextBlock Text="Список дел:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         <TextBlock x:Name="F_GridDealList_TextBlock_TitleCountDeal" FontFamily="Arial" FontSize="16" VerticalAlignment="Center" Margin="4,0,0,0"/>
                     </StackPanel>
-                    <StackPanel Visibility="Hidden" x:Name="F_GridDealList_TitleSelectDeal" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <StackPanel Visibility="Hidden" x:Name="F_GridDealList_TitleSelectDeal" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,22,0">
                         <TextBlock Text="Выбрано дело:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,4,0"/>
                         <TextBlock x:Name="F_GridDealList_TextBlock_TitleSelectDeal" FontFamily="Arial" FontSize="16" VerticalAlignment="Center"/>
                     </StackPanel>
+                    <Button Margin="1,1,1,1" Height="18" Width="18" Click="F_GridDealList_ToExcell" HorizontalAlignment="Right">
+                        <Image Source="Resources/Save.png"/>
+                    </Button>
                 </Grid>
                 <!-- Таблица -->
                 <DataGrid Grid.Row="1" IsReadOnly="True" x:Name="F_DataGrid_Deallist" AutoGeneratingColumn="DataGrid_OnAutoGenerating" CanUserSortColumns="False" SelectedCellsChanged="DataGrid_SelectedCellsChanged" Background="#33F0F0F0" BorderBrush="#FF6BAF68"/>
