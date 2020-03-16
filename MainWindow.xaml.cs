@@ -47,20 +47,31 @@ namespace CourseProject
         public MainWindow()
         {
             InitializeComponent();
-            CreateConnection();
 
-            if (AutorizationUser())
+            //Подключение к БД
+            if (CreateConnection())
             {
-                //Если пользователь был авторизован
-                WayFound();
-                FoundDealInList(null);
+                //Создание основных таблиц
+                Table = new Tables(UsAc);
+
+                //Авторизация
+                if (AutorizationUser())
+                {
+                    //Если пользователь был авторизован
+                    WayFound();
+                    FoundDealInList(null);
+                }
+                else
+                {
+                    this.Close();
+                }
             }
         }
 
         /// <summary>
         /// Создание подключения
         /// </summary>
-        private void CreateConnection()
+        private bool CreateConnection()
         {
             //Определение пути до БД
             try
@@ -81,16 +92,14 @@ namespace CourseProject
                 {
                     AutoOpen = true
                 };
+                return true;
             }
             catch
             {
                 MessageBox.Show("Не удалось подключится к базе данных, пожалуйста, обратитесь к администратору");
                 this.Close();
-                return;
+                return false;
             }
-
-            //Присоединение таблиц
-            Table = new Tables(UsAc);
         }
 
         /// <summary>
