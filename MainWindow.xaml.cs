@@ -908,7 +908,23 @@ namespace CourseProject
         private void SaveChangeForDocument()
         {
             string set = $@"Название_документа = ""{F_GridDocument_DocumentName.Text}"", ";
-            set += $@"Число_страниц = {F_GridDocument_CountPage.Text}, ";
+
+            if (F_GridDocument_CountPage.Text == "")
+            {
+                set += $@"Число_страниц = 0, ";                
+            }
+            else
+            {
+                try
+                {
+                    set += $@"Число_страниц = {Convert.ToInt32(F_GridDocument_CountPage.Text).ToString()}, ";
+                }
+                catch
+                {
+                    set += $@"Число_страниц = 0, ";
+                }
+            }
+
             set += $@"Комментарии = ""{F_GridDocument_Comment.Text}""";
 
             Table.Document.Update(set, $@"Номер_документа = {selectDocument}");
