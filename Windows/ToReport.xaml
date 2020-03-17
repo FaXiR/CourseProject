@@ -1,0 +1,28 @@
+﻿<Window x:Class="CourseProject.Windows.ToReport"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CourseProject.Windows"
+        mc:Ignorable="d"
+        Title="Вывод отчета" Height="170.545" Width="264.807" >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="56"/>
+            <RowDefinition Height="84"/>
+        </Grid.RowDefinitions>
+        <StackPanel x:Name="F_Grid_Word" Grid.Row="0">
+            <TextBlock Text="Дело не выбрано" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,4,0,0" x:Name="F_TextBlock_Deal"/>
+            <Button Content="Сформировать опись" Width="124" Height="24" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,4,0,0" Click="F_OutToWord"/>
+        </StackPanel>
+        <StackPanel x:Name="F_Grid_Excell" Grid.Row="1" HorizontalAlignment="Center" Margin="12,0,13,0" Width="232">
+            <TextBlock Text="Дела хранящиеся в архиве в промежутке" Margin="0,4,0,0"/>
+            <StackPanel Margin="0,4,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
+                <DatePicker x:Name="F_Date_start"/>
+                <TextBlock Text=" - " VerticalAlignment="Center"/>
+                <DatePicker x:Name="F_Date_end"/>
+            </StackPanel>
+            <Button Content="Вывести в Excel" Width="124" Height="24" Margin="0,4,0,0" Click="F_OutToExcell"/>
+        </StackPanel>
+    </Grid>
+</Window>
