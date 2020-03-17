@@ -15,7 +15,7 @@
             <TextBlock Text="Дело не выбрано" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,4,0,0" x:Name="F_TextBlock_Deal"/>
             <Button Content="Сформировать опись" Width="124" Height="24" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,4,0,0" Click="F_OutToWord"/>
         </StackPanel>
-        <StackPanel x:Name="F_Grid_Excell" Grid.Row="1" HorizontalAlignment="Center" Margin="12,0,13,0" Width="232">
+        <StackPanel x:Name="F_Grid_Excell" Grid.Row="1" HorizontalAlignment="Center" Margin="0" Width="232">
             <TextBlock Text="Дела хранящиеся в архиве в промежутке" Margin="0,4,0,0"/>
             <StackPanel Margin="0,4,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
                 <DatePicker x:Name="F_Date_start"/>
