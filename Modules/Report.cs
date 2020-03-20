@@ -88,31 +88,71 @@ namespace CourseProject.Modules
         {
             //Получение записи из таблицы
             var DealTable = UsAc.Execute($@"SELECT * FROM Дело WHERE Номер_дела = ""{NumOfDeal}""");
-            string DateStart = DealTable.Table.Rows[0]["Дата_открытия"].ToString();
-            string DateEnd = DealTable.Table.Rows[0]["Дата_закрытия"].ToString();
-            string DateStorage = DealTable.Table.Rows[0]["Дата_введения на хранение"].ToString();
+            string DateStart = DealTable.Table.Rows[0]["Дата_открытия"].ToString().Substring(0, 10);
+            string DateEnd = DealTable.Table.Rows[0]["Дата_закрытия"].ToString().Substring(0, 10);
+            string DateStorage = DealTable.Table.Rows[0]["Дата_введения_на_хранение"].ToString().Substring(0, 10);
+            string Zaveritel = DealTable.Table.Rows[0]["Заверитель"].ToString();
 
+            //Получение списка документов
+            var DocumentsInDealTable = UsAc.Execute($@"SELECT * FROM Документ Where Номер_дела = ""{NumOfDeal}""");
+            string DocCount = DocumentsInDealTable.Count.ToString() + "______";
 
+            //Число страниц для документа
+            int DocNum = 1;
 
             var wordApp = new Microsoft.Office.Interop.Word.Application();
             wordApp.Visible = false;
             object missing = System.Reflection.Missing.Value;
-            var wordDocument = wordApp.Documents.Open(@"C:\Users\Максим Богданов\Desktop\register.docx");
-            try
+            var wordDocument = wordApp.Documents.Open(Environment.CurrentDirectory + "/model/register.docx");
+            //try
             {
                 ReplaceWordStub("{Num}", NumOfDeal, wordDocument);
+                ReplaceWordStub("{DocCount}", DocCount, wordDocument);
+                ReplaceWordStub("{DateStart}", DateStart, wordDocument);
+                ReplaceWordStub("{DateEnd}", DateEnd, wordDocument);
+                ReplaceWordStub("{DateStorage}", DateStorage, wordDocument);
+                ReplaceWordStub("{Zav}", Zaveritel, wordDocument);
 
+                Microsoft.Office.Interop.Word.Table wordTable = wordDocument.Tables[1];
+                for (int x = 2; x < DocumentsInDealTable.Table.Rows.Count + 2; x++)
+                {
+                    //Добавляем строку таблицы
+                    object oMissing = System.Reflection.Missing.Value;
+                    wordTable.Rows.Add(ref oMissing);
 
+                    //# п/п
+                    wordTable.Cell(x, 1).Range.Text = (x - 1).ToString();
 
+                    //Наименование
+                    wordTable.Cell(x, 2).Range.Text = DocumentsInDealTable.Table.Rows[x - 2]["Название_документа"].ToString();
 
+                    //Номера листов
+                    if (DocumentsInDealTable.Table.Rows[x - 2]["Число_страниц"].ToString() == "1")
+                    {
+                        wordTable.Cell(x, 3).Range.Text = (DocNum++).ToString();
 
+                    }
+                    else if (DocumentsInDealTable.Table.Rows[x - 2]["Число_страниц"].ToString() == "0")
+                    {
+                        wordTable.Cell(x, 3).Range.Text = DocNum.ToString();
+                    }
+                    else
+                    {
+                        string num = (DocNum + 1).ToString() + "-";
+                        var count = Convert.ToInt32(DocumentsInDealTable.Table.Rows[x - 2]["Число_страниц"]) - 1;
 
+                        DocNum += count;
+                        num += DocNum.ToString();
+
+                        wordTable.Cell(x, 3).Range.Text = num;
+                    }
+                }
             }
-            catch (Exception ex)
+            //catch (Exception ex)
             {
-                object doNotSaveChanges = Microsoft.Office.Interop.Word.WdSaveOptions.wdDoNotSaveChanges;
-                wordDocument.Close(ref doNotSaveChanges, ref missing, ref missing);
-                throw ex;
+               // object doNotSaveChanges = Microsoft.Office.Interop.Word.WdSaveOptions.wdDoNotSaveChanges;
+                //wordDocument.Close(ref doNotSaveChanges, ref missing, ref missing);
+                //throw ex;
             }
 
             wordApp.Visible = true;

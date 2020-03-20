@@ -124,7 +124,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Resources\register.docx" />
+    <None Include="ThirdPartyResourcesForWork\image\Thumbs.db" />
+    <None Include="ThirdPartyResourcesForWork\model\register.docx" />
+    <None Include="ThirdPartyResourcesForWork\model\~%24gister.docx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -162,6 +164,23 @@
   <ItemGroup>
     <Resource Include="Resources\FileNotFound.jpg" />
     <Resource Include="Resources\FileNotImage.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ThirdPartyResourcesForWork\image\1.jpg" />
+    <Resource Include="ThirdPartyResourcesForWork\image\10.png" />
+    <Resource Include="ThirdPartyResourcesForWork\image\2.jpg" />
+    <Resource Include="ThirdPartyResourcesForWork\image\3.jpg" />
+    <Resource Include="ThirdPartyResourcesForWork\image\4.jpg" />
+    <Resource Include="ThirdPartyResourcesForWork\image\5.jpg" />
+    <Resource Include="ThirdPartyResourcesForWork\image\6.jpg" />
+    <Resource Include="ThirdPartyResourcesForWork\image\7.jpg" />
+    <Resource Include="ThirdPartyResourcesForWork\image\8.jpg" />
+    <Resource Include="ThirdPartyResourcesForWork\image\9.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ThirdPartyResourcesForWork\db.mdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

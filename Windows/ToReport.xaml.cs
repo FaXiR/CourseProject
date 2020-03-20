@@ -99,6 +99,7 @@ namespace CourseProject.Windows
         private void F_OutToWord(object sender, RoutedEventArgs e)
         {
             report.OutToWord(F_TextBlock_Deal.Text);
+            this.DialogResult = true;
         }
     }
 }
