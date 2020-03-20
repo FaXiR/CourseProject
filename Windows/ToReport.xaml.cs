@@ -98,7 +98,15 @@ namespace CourseProject.Windows
 
         private void F_OutToWord(object sender, RoutedEventArgs e)
         {
-            report.OutToWord(F_TextBlock_Deal.Text);
+            try
+            {
+                report.OutToWord(F_TextBlock_Deal.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            
             this.DialogResult = true;
         }
     }

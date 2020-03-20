@@ -104,7 +104,7 @@ namespace CourseProject.Modules
             wordApp.Visible = false;
             object missing = System.Reflection.Missing.Value;
             var wordDocument = wordApp.Documents.Open(Environment.CurrentDirectory + "/model/register.docx");
-            //try
+            try
             {
                 ReplaceWordStub("{Num}", NumOfDeal, wordDocument);
                 ReplaceWordStub("{DocCount}", DocCount, wordDocument);
@@ -148,11 +148,11 @@ namespace CourseProject.Modules
                     }
                 }
             }
-            //catch (Exception ex)
+            catch (Exception ex)
             {
-               // object doNotSaveChanges = Microsoft.Office.Interop.Word.WdSaveOptions.wdDoNotSaveChanges;
-                //wordDocument.Close(ref doNotSaveChanges, ref missing, ref missing);
-                //throw ex;
+                object doNotSaveChanges = Microsoft.Office.Interop.Word.WdSaveOptions.wdDoNotSaveChanges;
+                wordDocument.Close(ref doNotSaveChanges, ref missing, ref missing);
+                throw ex;
             }
 
             wordApp.Visible = true;
