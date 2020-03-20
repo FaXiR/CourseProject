@@ -124,9 +124,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="ThirdPartyResourcesForWork\image\Thumbs.db" />
-    <None Include="ThirdPartyResourcesForWork\model\register.docx" />
-    <None Include="ThirdPartyResourcesForWork\model\~%24gister.docx" />
+    <Content Include="model\register.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -178,9 +178,7 @@
     <Resource Include="ThirdPartyResourcesForWork\image\9.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ThirdPartyResourcesForWork\db.mdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <None Include="ThirdPartyResourcesForWork\db.mdb" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
