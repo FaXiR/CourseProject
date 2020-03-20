@@ -4,11 +4,19 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Office.Interop.Word;
 
 namespace CourseProject.Modules
 {
     class Report
     {
+        UsingAccess UsAc;
+
+        public Report(UsingAccess UsAc)
+        {
+            this.UsAc = UsAc;
+        }
+
         /// <summary>
         /// Вывод таблицы в эксель
         /// </summary>
@@ -76,10 +84,45 @@ namespace CourseProject.Modules
             excelapp.Visible = true;
         }
 
-        public void OutToWord()
+        public void OutToWord(string NumOfDeal)
         {
+            //Получение записи из таблицы
+            var DealTable = UsAc.Execute($@"SELECT * FROM Дело WHERE Номер_дела = ""{NumOfDeal}""");
+            string DateStart = DealTable.Table.Rows[0]["Дата_открытия"].ToString();
+            string DateEnd = DealTable.Table.Rows[0]["Дата_закрытия"].ToString();
+            string DateStorage = DealTable.Table.Rows[0]["Дата_введения на хранение"].ToString();
 
+
+
+            var wordApp = new Microsoft.Office.Interop.Word.Application();
+            wordApp.Visible = false;
+            object missing = System.Reflection.Missing.Value;
+            var wordDocument = wordApp.Documents.Open(@"C:\Users\Максим Богданов\Desktop\register.docx");
+            try
+            {
+                ReplaceWordStub("{Num}", NumOfDeal, wordDocument);
+
+
+
+
+
+
+            }
+            catch (Exception ex)
+            {
+                object doNotSaveChanges = Microsoft.Office.Interop.Word.WdSaveOptions.wdDoNotSaveChanges;
+                wordDocument.Close(ref doNotSaveChanges, ref missing, ref missing);
+                throw ex;
+            }
+
+            wordApp.Visible = true;
         }
 
+        private void ReplaceWordStub(string stubToReplace, string text, Microsoft.Office.Interop.Word.Document wordDocument)
+        {
+            var range = wordDocument.Content;
+            range.Find.ClearFormatting();
+            range.Find.Execute(FindText: stubToReplace, ReplaceWith: text);
+        }
     }
 }

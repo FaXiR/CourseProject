@@ -39,7 +39,7 @@ namespace CourseProject
         private string UserFIO = null;
 
 
-        private Report report = new Report();
+        private Report report;
 
 
 
@@ -54,6 +54,7 @@ namespace CourseProject
             //Подключение к БД
             if (CreateConnection())
             {
+                report = new Report(UsAc);
                 //Создание основных таблиц
                 Table = new Tables(UsAc);
 

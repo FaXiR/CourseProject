@@ -21,13 +21,14 @@ namespace CourseProject.Windows
     public partial class ToReport : Window
     {
         UsingAccess UsAc;
-        Report report = new Report();
+        Report report;
 
         public ToReport(UsingAccess UsAc, string Deal)
         {
             InitializeComponent();
 
             this.UsAc = UsAc;
+            report = new Report(UsAc);
 
             if (Deal == null)
             {
@@ -65,7 +66,7 @@ namespace CourseProject.Windows
 
         private void F_OutToWord(object sender, RoutedEventArgs e)
         {
-
+            report.OutToWord(F_TextBlock_Deal.Text);
         }
     }
 }
