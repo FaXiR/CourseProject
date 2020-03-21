@@ -95,7 +95,7 @@ namespace CourseProject.Modules
 
             //Получение списка документов
             var DocumentsInDealTable = UsAc.Execute($@"SELECT * FROM Документ Where Номер_дела = ""{NumOfDeal}""");
-            string DocCount = DocumentsInDealTable.Count.ToString() + "______";
+            string DocCount = DocumentsInDealTable.Count.ToString() + "      ";
 
             //Число страниц для документа
             int DocNum = 1;
@@ -122,9 +122,12 @@ namespace CourseProject.Modules
 
                     //# п/п
                     wordTable.Cell(x, 1).Range.Text = (x - 1).ToString();
+                    wordTable.Cell(x, 1).Range.Bold = 0;
+                    wordTable.Cell(x, 1).Range.Cells.SetHeight(1, WdRowHeightRule.wdRowHeightAuto);
 
                     //Наименование
                     wordTable.Cell(x, 2).Range.Text = DocumentsInDealTable.Table.Rows[x - 2]["Название_документа"].ToString();
+                    wordTable.Cell(x, 2).Range.Bold = 0;
 
                     //Номера листов
                     if (DocumentsInDealTable.Table.Rows[x - 2]["Число_страниц"].ToString() == "1")
@@ -146,6 +149,8 @@ namespace CourseProject.Modules
 
                         wordTable.Cell(x, 3).Range.Text = num;
                     }
+                    wordTable.Cell(x, 3).Range.Bold = 0;
+                    wordTable.Cell(x, 3).Range.Cells.SetHeight(1, WdRowHeightRule.wdRowHeightAuto);
                 }
             }
             catch (Exception ex)
