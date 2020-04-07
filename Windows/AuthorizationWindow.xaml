@@ -17,9 +17,9 @@
         <StackPanel Margin="30">
             <Image Source="/CourseProject;component/Resources/Authorizaton.png" Margin="0,6,0,0" Height="96" Width="96" HorizontalAlignment="Center"/>
             <TextBlock Text="Логин" Margin="0,25,0,0" FontSize="16" HorizontalAlignment="Center" FontFamily="Arial"/>
-            <TextBox FontFamily="Arial" Margin="10,6" x:Name="F_Login" KeyUp="F_KeyUp_Login" Text="admin"/>
+            <TextBox FontFamily="Arial" Margin="10,6" x:Name="F_Login" KeyUp="F_KeyUp_Login"/>
             <TextBlock Text="Пароль" HorizontalAlignment="Center" FontFamily="Arial" FontSize="16"/>
-            <PasswordBox FontFamily="Arial" Margin="10,6" x:Name="F_Password" KeyUp="F_KeyUp_Password" Password="2233"/>
+            <PasswordBox FontFamily="Arial" Margin="10,6" x:Name="F_Password" KeyUp="F_KeyUp_Password"/>
         </StackPanel>
         <Button Content="Войти" Height="40" Width="120" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" Margin="0,0,0,10" Background="#FF95CC29" BorderBrush="#FF666666" Foreground="Black" FontSize="18" FontFamily="Arial" Click="F_PressEnter"/>
     </Grid>

@@ -1099,5 +1099,18 @@ namespace CourseProject
             }
         }
         #endregion
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            //Проверка наличия файла помощи
+            if (File.Exists(Environment.CurrentDirectory + "\\Help.chm"))
+            {
+                Process.Start(Environment.CurrentDirectory + "\\Help.chm");
+            }
+            else
+            {
+                MessageBox.Show("Файл помощи не найден!");
+            }
+        }
     }
 }

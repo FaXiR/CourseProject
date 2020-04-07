@@ -12,276 +12,279 @@
             <GradientStop Color="#FFCAE594" Offset="1"/>
         </LinearGradientBrush>
     </Window.Background>
-    <Grid Margin="10">
-        <!--Основное рабочее место-->
-        <Grid>
-            <!--Список дел-->
-            <Grid x:Name="F_GridDealList">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="64"/>
-                </Grid.RowDefinitions>
-                <!-- Титульная часть -->
-                <Grid Grid.Row="0" Margin="4,0,4,0" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                        <Button Margin="1,1,4,1" Height="18" Width="18" Click="F_GridDealList_ResetDealList">
-                            <Image Source="Resources/Update.png"/>
+    <Grid>
+        <Grid Margin="10">
+            <!--Основное рабочее место-->
+            <Grid>
+                <!--Список дел-->
+                <Grid x:Name="F_GridDealList">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="64"/>
+                    </Grid.RowDefinitions>
+                    <!-- Титульная часть -->
+                    <Grid Grid.Row="0" Margin="4,0,4,0" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Button Margin="1,1,4,1" Height="18" Width="18" Click="F_GridDealList_ResetDealList">
+                                <Image Source="Resources/Update.png"/>
+                            </Button>
+                            <TextBlock Text="Список дел:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBlock x:Name="F_GridDealList_TextBlock_TitleCountDeal" FontFamily="Arial" FontSize="16" VerticalAlignment="Center" Margin="4,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Visibility="Hidden" x:Name="F_GridDealList_TitleSelectDeal" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,22,0">
+                            <TextBlock Text="Выбрано дело:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,4,0"/>
+                            <TextBlock x:Name="F_GridDealList_TextBlock_TitleSelectDeal" FontFamily="Arial" FontSize="16" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <Button Margin="1,1,1,1" Height="18" Width="18" Click="F_GridDealList_ToExcell" HorizontalAlignment="Right">
+                            <Image Source="Resources/Save.png"/>
                         </Button>
-                        <TextBlock Text="Список дел:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <TextBlock x:Name="F_GridDealList_TextBlock_TitleCountDeal" FontFamily="Arial" FontSize="16" VerticalAlignment="Center" Margin="4,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Visibility="Hidden" x:Name="F_GridDealList_TitleSelectDeal" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,22,0">
-                        <TextBlock Text="Выбрано дело:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,4,0"/>
-                        <TextBlock x:Name="F_GridDealList_TextBlock_TitleSelectDeal" FontFamily="Arial" FontSize="16" VerticalAlignment="Center"/>
-                    </StackPanel>
-                    <Button Margin="1,1,1,1" Height="18" Width="18" Click="F_GridDealList_ToExcell" HorizontalAlignment="Right">
-                        <Image Source="Resources/Save.png"/>
-                    </Button>
-                </Grid>
-                <!-- Таблица -->
-                <DataGrid Grid.Row="1" IsReadOnly="True" x:Name="F_DataGrid_Deallist" AutoGeneratingColumn="DataGrid_OnAutoGenerating" CanUserSortColumns="False" SelectedCellsChanged="DataGrid_SelectedCellsChanged" Background="#33F0F0F0" BorderBrush="#FF6BAF68"/>
-                <!-- Рабочая часть -->
-                <Grid Grid.Row="2">
-                    <StackPanel>
-                        <!-- Часть поиска -->
-                        <StackPanel Orientation="Horizontal">
-                            <TextBox x:Name="F_GridDealList_TextBoxFound" FontSize="16" TextAlignment="Center" Margin="1,1,3,1" Height="28" Width="146" VerticalAlignment="Bottom" HorizontalAlignment="Left" KeyUp="F_GridDealList_TextBoxFoundKeyPress"/>
-                            <Button Margin="1,1,3,1" Height="28" Width="70" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="F_GridDealList_FoundInDealList">
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Source="Resources/Found.png"/>
-                                    <TextBlock Text=" Найти" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
+                    </Grid>
+                    <!-- Таблица -->
+                    <DataGrid Grid.Row="1" IsReadOnly="True" x:Name="F_DataGrid_Deallist" AutoGeneratingColumn="DataGrid_OnAutoGenerating" CanUserSortColumns="False" SelectedCellsChanged="DataGrid_SelectedCellsChanged" Background="#33F0F0F0" BorderBrush="#FF6BAF68"/>
+                    <!-- Рабочая часть -->
+                    <Grid Grid.Row="2">
+                        <StackPanel>
+                            <!-- Часть поиска -->
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox x:Name="F_GridDealList_TextBoxFound" FontSize="16" TextAlignment="Center" Margin="1,1,3,1" Height="28" Width="146" VerticalAlignment="Bottom" HorizontalAlignment="Left" KeyUp="F_GridDealList_TextBoxFoundKeyPress"/>
+                                <Button Margin="1,1,3,1" Height="28" Width="70" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="F_GridDealList_FoundInDealList">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="Resources/Found.png"/>
+                                        <TextBlock Text=" Найти" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
 
-                        <!-- Часть взаимодействия -->
-                        <StackPanel Orientation="Horizontal">
-                            <Button Margin="1,1,3,1" Height="32" Width="96" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="F_GridDealList_AddDeal">
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Source="Resources/Add.png"/>
-                                    <TextBlock Text=" Добавить" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Button>
-                            <Button Margin="1" Height="32" Width="120" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="F_GridDealList_Edit">
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Source="Resources/Edit.png"/>
-                                    <TextBlock Text=" Редактировать" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Button>
+                            <!-- Часть взаимодействия -->
+                            <StackPanel Orientation="Horizontal">
+                                <Button Margin="1,1,3,1" Height="32" Width="96" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="F_GridDealList_AddDeal">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="Resources/Add.png"/>
+                                        <TextBlock Text=" Добавить" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Margin="1" Height="32" Width="120" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="F_GridDealList_Edit">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="Resources/Edit.png"/>
+                                        <TextBlock Text=" Редактировать" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
-                    <Button Margin="1" Height="32" Width="90" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="F_GridDealList_DeleteDeal">
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="Resources/Delete.png"/>
-                            <TextBlock Text=" Удалить" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                </Grid>
-            </Grid>
-
-            <!--Обзор дела / Список документов-->
-            <Grid x:Name="F_GridDeal" Visibility="Hidden">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="106"/>
-                    <RowDefinition Height="10"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="64"/>
-                </Grid.RowDefinitions>
-                <!-- Титульная часть для дела -->
-                <Grid Grid.Row="0" Margin="4,0,4,0" VerticalAlignment="Center">
-                    <StackPanel x:Name="F_GridDeal_TitleDealList" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                        <Button Margin="1,1,4,1" Height="18" Width="18" Click="F_GridDeal_Back">
-                            <Image Source="Resources/Back.png"/>
+                        <Button Margin="1" Height="32" Width="90" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="F_GridDealList_DeleteDeal">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="Resources/Delete.png"/>
+                                <TextBlock Text=" Удалить" VerticalAlignment="Center"/>
+                            </StackPanel>
                         </Button>
-                        <TextBlock Text="Дело:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <TextBlock x:Name="F_GridDeal_TextBlock_TitleSelectDeal" FontFamily="Arial" FontSize="16" VerticalAlignment="Center" Margin="4,0,0,0"/>
-                    </StackPanel>
-                </Grid>
-                <!-- Часть редактирования дела-->
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="180"/>
-                        <ColumnDefinition Width="220"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Панел названия полей -->
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Margin="0,6,0,0" Height="20" Text="Дата введения на хранение:" HorizontalAlignment="Right"/>
-                        <TextBlock Margin="0,6,0,0" Height="20" Text="Дата открытия - закрытия дела:" HorizontalAlignment="Right"/>
-                        <TextBlock Margin="0,6,0,0" Height="20" Text="Причина открытия дела:" HorizontalAlignment="Right"/>
-                        <TextBlock Margin="0,6,0,0" Height="20" Text="Заверитель:" HorizontalAlignment="Right"/>
-                    </StackPanel>
-
-                    <!-- Панел textbox полей -->
-                    <StackPanel Grid.Column="1" Margin="4,0">
-                        <DatePicker x:Name="F_GridDeal_DateStorage" Margin="0,2,0,0" Height="24" Width="100" HorizontalAlignment="Left"/>
-                        <StackPanel Margin="0,2,0,0" Orientation="Horizontal" Height="24" Width="212" HorizontalAlignment="Left">
-                            <DatePicker Name="F_GridDeal_DateOpen" Height="24" Width="100" HorizontalAlignment="Left"/>
-                            <TextBlock Margin="0,4,0,0" Height="20" Text=" - " HorizontalAlignment="Center"/>
-                            <DatePicker Name="F_GridDeal_DateClose" Height="24" Width="100" HorizontalAlignment="Right"/>
-                        </StackPanel>
-                        <TextBox x:Name="F_GridDeal_ReasonOpen" Margin="0,2,0,0" Height="24" Width="212" HorizontalAlignment="Left"/>
-                        <TextBox x:Name="F_GridDeal_assure" Margin="0,2,0,0" Height="24" Width="212" HorizontalAlignment="Left"/>
-                    </StackPanel>
-
-                    <!-- Панел комментария поля -->
-                    <Grid Grid.Column="2" HorizontalAlignment="Left">
-                        <TextBlock Text="Комментарий:" Margin="0,6,0,0"/>
-                        <TextBox x:Name="F_GridDeal_Comment" Margin="0,28,0,3" MaxWidth="220" MinWidth="100" TextWrapping="Wrap"/>
                     </Grid>
                 </Grid>
-                <!-- Титульная часть для списка документов -->
-                <Grid Grid.Row="3" Margin="4,0,4,0" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                        <Button Margin="1,1,4,1" Height="18" Width="18" Click="F_GridDocumentList_ResetDealList">
-                            <Image Source="Resources/Update.png"/>
+
+                <!--Обзор дела / Список документов-->
+                <Grid x:Name="F_GridDeal" Visibility="Hidden">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="106"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="64"/>
+                    </Grid.RowDefinitions>
+                    <!-- Титульная часть для дела -->
+                    <Grid Grid.Row="0" Margin="4,0,4,0" VerticalAlignment="Center">
+                        <StackPanel x:Name="F_GridDeal_TitleDealList" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Button Margin="1,1,4,1" Height="18" Width="18" Click="F_GridDeal_Back">
+                                <Image Source="Resources/Back.png"/>
+                            </Button>
+                            <TextBlock Text="Дело:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBlock x:Name="F_GridDeal_TextBlock_TitleSelectDeal" FontFamily="Arial" FontSize="16" VerticalAlignment="Center" Margin="4,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                    <!-- Часть редактирования дела-->
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="180"/>
+                            <ColumnDefinition Width="220"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Панел названия полей -->
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Margin="0,6,0,0" Height="20" Text="Дата введения на хранение:" HorizontalAlignment="Right"/>
+                            <TextBlock Margin="0,6,0,0" Height="20" Text="Дата открытия - закрытия дела:" HorizontalAlignment="Right"/>
+                            <TextBlock Margin="0,6,0,0" Height="20" Text="Причина открытия дела:" HorizontalAlignment="Right"/>
+                            <TextBlock Margin="0,6,0,0" Height="20" Text="Заверитель:" HorizontalAlignment="Right"/>
+                        </StackPanel>
+
+                        <!-- Панел textbox полей -->
+                        <StackPanel Grid.Column="1" Margin="4,0">
+                            <DatePicker x:Name="F_GridDeal_DateStorage" Margin="0,2,0,0" Height="24" Width="100" HorizontalAlignment="Left"/>
+                            <StackPanel Margin="0,2,0,0" Orientation="Horizontal" Height="24" Width="212" HorizontalAlignment="Left">
+                                <DatePicker Name="F_GridDeal_DateOpen" Height="24" Width="100" HorizontalAlignment="Left"/>
+                                <TextBlock Margin="0,4,0,0" Height="20" Text=" - " HorizontalAlignment="Center"/>
+                                <DatePicker Name="F_GridDeal_DateClose" Height="24" Width="100" HorizontalAlignment="Right"/>
+                            </StackPanel>
+                            <TextBox x:Name="F_GridDeal_ReasonOpen" Margin="0,2,0,0" Height="24" Width="212" HorizontalAlignment="Left"/>
+                            <TextBox x:Name="F_GridDeal_assure" Margin="0,2,0,0" Height="24" Width="212" HorizontalAlignment="Left"/>
+                        </StackPanel>
+
+                        <!-- Панел комментария поля -->
+                        <Grid Grid.Column="2" HorizontalAlignment="Left">
+                            <TextBlock Text="Комментарий:" Margin="0,6,0,0"/>
+                            <TextBox x:Name="F_GridDeal_Comment" Margin="0,28,0,3" MaxWidth="220" MinWidth="100" TextWrapping="Wrap"/>
+                        </Grid>
+                    </Grid>
+                    <!-- Титульная часть для списка документов -->
+                    <Grid Grid.Row="3" Margin="4,0,4,0" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Button Margin="1,1,4,1" Height="18" Width="18" Click="F_GridDocumentList_ResetDealList">
+                                <Image Source="Resources/Update.png"/>
+                            </Button>
+                            <TextBlock Text="Список документов:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBlock x:Name="F_GridDeal_TextBlock_TitleCountDocument" FontFamily="Arial" FontSize="16" VerticalAlignment="Center" Margin="4,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Visibility="Hidden" x:Name="F_GridDocumentList_TitleSelectDeal" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <TextBlock Text="Выбран документ:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,4,0"/>
+                            <TextBlock x:Name="F_GridDocumentList_TextBlock_TitleSelectDocument" FontFamily="Arial" FontSize="16" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Таблица -->
+                    <DataGrid Grid.Row="4" IsReadOnly="True" x:Name="F_DataGrid_Document" AutoGeneratingColumn="DataGrid_OnAutoGenerating" CanUserSortColumns="False" SelectedCellsChanged="DataGrid_SelectedCellsChanged" Background="#33F0F0F0" BorderBrush="#FF6BAF68"/>
+
+                    <!-- Рабочая часть -->
+                    <Grid Grid.Row="5">
+                        <StackPanel>
+                            <!-- Часть поиска -->
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox x:Name="F_GridDeal_TextBoxFound" FontSize="16" TextAlignment="Center" Margin="1,1,3,1" Height="28" Width="146" VerticalAlignment="Bottom" HorizontalAlignment="Left" KeyUp="F_GridDeal_TextBoxFoundKeyPress"/>
+                                <Button Margin="1,1,3,1" Height="28" Width="70" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="F_GridDeal_FoundInDealList">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="Resources/Found.png"/>
+                                        <TextBlock Text=" Найти" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+
+                            <!-- Часть взаимодействия -->
+                            <StackPanel Orientation="Horizontal">
+                                <Button Margin="1,1,3,1" Height="32" Width="96" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="F_GridDeal_AddDeal">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="Resources/Add.png"/>
+                                        <TextBlock Text=" Добавить" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Margin="1" Height="32" Width="120" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="F_GridDeal_Edit">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="Resources/Edit.png"/>
+                                        <TextBlock Text=" Редактировать" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                        <Button Margin="1" Height="32" Width="90" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="F_GridDeal_DeleteDeal">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="Resources/Delete.png"/>
+                                <TextBlock Text=" Удалить" VerticalAlignment="Center"/>
+                            </StackPanel>
                         </Button>
-                        <TextBlock Text="Список документов:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <TextBlock x:Name="F_GridDeal_TextBlock_TitleCountDocument" FontFamily="Arial" FontSize="16" VerticalAlignment="Center" Margin="4,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Visibility="Hidden" x:Name="F_GridDocumentList_TitleSelectDeal" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                        <TextBlock Text="Выбран документ:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,4,0"/>
-                        <TextBlock x:Name="F_GridDocumentList_TextBlock_TitleSelectDocument" FontFamily="Arial" FontSize="16" VerticalAlignment="Center"/>
-                    </StackPanel>
+                    </Grid>
                 </Grid>
 
-                <!-- Таблица -->
-                <DataGrid Grid.Row="4" IsReadOnly="True" x:Name="F_DataGrid_Document" AutoGeneratingColumn="DataGrid_OnAutoGenerating" CanUserSortColumns="False" SelectedCellsChanged="DataGrid_SelectedCellsChanged" Background="#33F0F0F0" BorderBrush="#FF6BAF68"/>
-
-                <!-- Рабочая часть -->
-                <Grid Grid.Row="5">
-                    <StackPanel>
-                        <!-- Часть поиска -->
-                        <StackPanel Orientation="Horizontal">
-                            <TextBox x:Name="F_GridDeal_TextBoxFound" FontSize="16" TextAlignment="Center" Margin="1,1,3,1" Height="28" Width="146" VerticalAlignment="Bottom" HorizontalAlignment="Left" KeyUp="F_GridDeal_TextBoxFoundKeyPress"/>
-                            <Button Margin="1,1,3,1" Height="28" Width="70" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="F_GridDeal_FoundInDealList">
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Source="Resources/Found.png"/>
-                                    <TextBlock Text=" Найти" VerticalAlignment="Center"/>
-                                </StackPanel>
+                <!--Обзор документа / Список скан образов-->
+                <Grid x:Name="F_GridDocument" Visibility="Hidden">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="78"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="34"/>
+                    </Grid.RowDefinitions>
+                    <!-- Титульная часть для документ -->
+                    <Grid Grid.Row="0" Margin="4,0,4,0" VerticalAlignment="Center">
+                        <StackPanel x:Name="F_GridDocument_TitleDealList" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Button Margin="1,1,4,1" Height="18" Width="18" Click="F_GridDocument_Back">
+                                <Image Source="Resources/Back.png"/>
                             </Button>
+                            <TextBlock Text="Документ:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBlock x:Name="F_GridDocument_TextBlock_TitleSelectDocument" FontFamily="Arial" FontSize="16" VerticalAlignment="Center" Margin="4,0,0,0"/>
                         </StackPanel>
+                    </Grid>
+                    <!-- Часть редактирования документа-->
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="180"/>
+                            <ColumnDefinition Width="220"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Панел названия полей -->
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Margin="0,6,0,0" Height="20" Text="Название документа:" HorizontalAlignment="Right"/>
+                            <TextBlock Margin="0,6,0,0" Height="20" Text="Число страниц:" HorizontalAlignment="Right"/>
+                            <TextBlock Margin="0,6,0,0" Height="20" Text="Комментарий:" HorizontalAlignment="Right"/>
+                        </StackPanel>
+
+                        <!-- Панел textbox полей -->
+                        <StackPanel Grid.Column="1" Margin="4,0">
+                            <TextBox x:Name="F_GridDocument_DocumentName" Margin="0,2,0,0" Height="24" Width="212" HorizontalAlignment="Left"/>
+                            <TextBox x:Name="F_GridDocument_CountPage" Margin="0,2,0,0" Height="24" Width="212" HorizontalAlignment="Left"/>
+                            <TextBox x:Name="F_GridDocument_Comment" Margin="0,2,0,0" Height="24" Width="212" HorizontalAlignment="Left"/>
+                        </StackPanel>
+                    </Grid>
+                    <!-- Титульная часть для списка документов -->
+                    <Grid Grid.Row="3" Margin="4,0,4,0" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Button Margin="1,1,4,1" Height="18" Width="18" Click="F_GridDocument_ResetImageList">
+                                <Image Source="Resources/Update.png"/>
+                            </Button>
+                            <TextBlock Text="Скан образы:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBlock x:Name="F_GridDocument_TextBlock_TitleCountImage" FontFamily="Arial" FontSize="16" VerticalAlignment="Center" Margin="4,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Visibility="Hidden" x:Name="F_GridDocument_TitleSelectImage" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <TextBlock Text="Выбран скан-образ:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,4,0"/>
+                            <TextBlock x:Name="F_GridDocument_TextBlock_TitleSelectImage" FontFamily="Arial" FontSize="16" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Таблица -->
+                    <Grid Grid.Row="4">
+                        <Rectangle Fill="#33F0F0F0" Stroke="#FF6BAF68"/>
+                        <WrapPanel x:Name="F_DataGrid_Image" ItemHeight="279" ItemWidth="210">
+
+
+                        </WrapPanel>
+                    </Grid>
+
+                    <!-- Рабочая часть -->
+                    <Grid Grid.Row="5">
 
                         <!-- Часть взаимодействия -->
-                        <StackPanel Orientation="Horizontal">
-                            <Button Margin="1,1,3,1" Height="32" Width="96" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="F_GridDeal_AddDeal">
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Source="Resources/Add.png"/>
-                                    <TextBlock Text=" Добавить" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Button>
-                            <Button Margin="1" Height="32" Width="120" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="F_GridDeal_Edit">
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Source="Resources/Edit.png"/>
-                                    <TextBlock Text=" Редактировать" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </StackPanel>
-                    <Button Margin="1" Height="32" Width="90" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="F_GridDeal_DeleteDeal">
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="Resources/Delete.png"/>
-                            <TextBlock Text=" Удалить" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                </Grid>
-            </Grid>
-
-            <!--Обзор документа / Список скан образов-->
-            <Grid x:Name="F_GridDocument" Visibility="Hidden">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="78"/>
-                    <RowDefinition Height="10"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="34"/>
-                </Grid.RowDefinitions>
-                <!-- Титульная часть для документ -->
-                <Grid Grid.Row="0" Margin="4,0,4,0" VerticalAlignment="Center">
-                    <StackPanel x:Name="F_GridDocument_TitleDealList" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                        <Button Margin="1,1,4,1" Height="18" Width="18" Click="F_GridDocument_Back">
-                            <Image Source="Resources/Back.png"/>
+                        <Button Margin="1,1,3,1" Height="32" Width="96" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="F_GridDocument_AddImage">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="Resources/Add.png"/>
+                                <TextBlock Text=" Добавить" VerticalAlignment="Center"/>
+                            </StackPanel>
                         </Button>
-                        <TextBlock Text="Документ:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <TextBlock x:Name="F_GridDocument_TextBlock_TitleSelectDocument" FontFamily="Arial" FontSize="16" VerticalAlignment="Center" Margin="4,0,0,0"/>
-                    </StackPanel>
-                </Grid>
-                <!-- Часть редактирования документа-->
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="180"/>
-                        <ColumnDefinition Width="220"/>
-                    </Grid.ColumnDefinitions>
 
-                    <!-- Панел названия полей -->
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Margin="0,6,0,0" Height="20" Text="Название документа:" HorizontalAlignment="Right"/>
-                        <TextBlock Margin="0,6,0,0" Height="20" Text="Число страниц:" HorizontalAlignment="Right"/>
-                        <TextBlock Margin="0,6,0,0" Height="20" Text="Комментарий:" HorizontalAlignment="Right"/>
-                    </StackPanel>
-
-                    <!-- Панел textbox полей -->
-                    <StackPanel Grid.Column="1" Margin="4,0">
-                        <TextBox x:Name="F_GridDocument_DocumentName" Margin="0,2,0,0" Height="24" Width="212" HorizontalAlignment="Left"/>
-                        <TextBox x:Name="F_GridDocument_CountPage" Margin="0,2,0,0" Height="24" Width="212" HorizontalAlignment="Left"/>
-                        <TextBox x:Name="F_GridDocument_Comment" Margin="0,2,0,0" Height="24" Width="212" HorizontalAlignment="Left"/>
-                    </StackPanel>
-                </Grid>
-                <!-- Титульная часть для списка документов -->
-                <Grid Grid.Row="3" Margin="4,0,4,0" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                        <Button Margin="1,1,4,1" Height="18" Width="18" Click="F_GridDocument_ResetImageList">
-                            <Image Source="Resources/Update.png"/>
+                        <Button Margin="100,1,3,1" Height="32" Width="96" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="F_GridDocument_OpenImage">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="Resources/Open.png"/>
+                                <TextBlock Text=" Перейти" VerticalAlignment="Center"/>
+                            </StackPanel>
                         </Button>
-                        <TextBlock Text="Скан образы:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <TextBlock x:Name="F_GridDocument_TextBlock_TitleCountImage" FontFamily="Arial" FontSize="16" VerticalAlignment="Center" Margin="4,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Visibility="Hidden" x:Name="F_GridDocument_TitleSelectImage" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                        <TextBlock Text="Выбран скан-образ:" FontFamily="Arial" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,4,0"/>
-                        <TextBlock x:Name="F_GridDocument_TextBlock_TitleSelectImage" FontFamily="Arial" FontSize="16" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Grid>
 
-                <!-- Таблица -->
-                <Grid Grid.Row="4">
-                    <Rectangle Fill="#33F0F0F0" Stroke="#FF6BAF68"/>
-                    <WrapPanel x:Name="F_DataGrid_Image" ItemHeight="279" ItemWidth="210">
-
-
-                    </WrapPanel>
-                </Grid>
-
-                <!-- Рабочая часть -->
-                <Grid Grid.Row="5">
-
-                    <!-- Часть взаимодействия -->
-                    <Button Margin="1,1,3,1" Height="32" Width="96" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="F_GridDocument_AddImage">
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="Resources/Add.png"/>
-                            <TextBlock Text=" Добавить" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button Margin="100,1,3,1" Height="32" Width="96" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="F_GridDocument_OpenImage">
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="Resources/Open.png"/>
-                            <TextBlock Text=" Перейти" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button Margin="1" Height="32" Width="90" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="F_GridDocument_DeleteImage">
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="Resources/Delete.png"/>
-                            <TextBlock Text=" Удалить" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
+                        <Button Margin="1" Height="32" Width="90" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="F_GridDocument_DeleteImage">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="Resources/Delete.png"/>
+                                <TextBlock Text=" Удалить" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
                 </Grid>
             </Grid>
         </Grid>
+        <Button VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,-1,0,0" Width="30" Height="20" Content="?" Click="Button_Click"/>
     </Grid>
 </Window>
